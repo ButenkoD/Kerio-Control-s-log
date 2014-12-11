@@ -10,8 +10,8 @@ class Database
 {
     const DB_SERVER_NAME = 'localhost';
     const DB_USERNAME = 'root';
-    const DB_PASSWORD = 'ftftr';
-    const DB_NAME = 'kerio_control';
+    const DB_PASSWORD = '';
+    const DB_NAME = 'kerio-log';
 
     private $tableName = 'log';
 
@@ -70,5 +70,15 @@ class Database
         $conn->close();
 
         return isset($data)? $data : 'Error';
+    }
+
+    public function clearLogData(){
+        $conn = $this->setConnection();
+        $sql = "TRUNCATE TABLE $this->tableName;";
+        if (mysqli_query($conn, $sql)){
+            return true;
+        } else {
+            return "Error: " . $sql . "<br>" . $conn->error;
+        }
     }
 }

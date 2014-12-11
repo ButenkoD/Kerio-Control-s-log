@@ -26,13 +26,13 @@
 </head>
 <body>
     <form>
-        <button onclick="showLog(); return false;">Show log records</button>
+        <button onclick="makeRequest('showAll'); return false">Show log records</button>
+        <button onclick="makeRequest('clear'); return false;">Clear Database</button>
     </form>
     <br>
     <div id="txtHint"><b>Person info will be listed here.</b></div>
     <script>
-        function showLog() {
-            console.log(141414);
+        function makeRequest(action) {
             if (window.XMLHttpRequest) {
                 // code for IE7+, Firefox, Chrome, Opera, Safari
                 xmlhttp = new XMLHttpRequest();
@@ -45,8 +45,7 @@
                     document.getElementById("txtHint").innerHTML = xmlhttp.responseText;
                 }
             }
-            xmlhttp.open("GET","getLog.php",true);
-//            xmlhttp.open("GET","getLog.php?q="+str,true);
+            xmlhttp.open("GET", "front-controller.php?q=" + action, true);
             xmlhttp.send();
         }
     </script>
