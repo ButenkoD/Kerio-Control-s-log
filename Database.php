@@ -56,20 +56,15 @@ class Database
     public function getData(array $parameters = array())
     {
         $conn = $this->setConnection();
-        if (empty($parameters)) {
-            $sql = "SELECT * FROM $this->tableName ORDER BY username;";
-        } else {
-            $sql = "SELECT * FROM $this->tableName ORDER BY username, date_time ASC";
-        }
-
-            if ($result = mysqli_query($conn, $sql)) {
-                $data = array();
-                while ($row = mysqli_fetch_array($result)){
-                    $data[] = $row;
-                }
-            } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
+        $sql = "SELECT * FROM $this->tableName ORDER BY username, date_time ASC";
+        if ($result = mysqli_query($conn, $sql)) {
+            $data = array();
+            while ($row = mysqli_fetch_array($result)){
+                $data[] = $row;
             }
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
         $conn->close();
 
         return isset($data)? $data : 'Error';
