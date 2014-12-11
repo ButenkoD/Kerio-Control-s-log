@@ -4,6 +4,7 @@ $q = $_GET['q'];
 $routing = array(
     'showAll' => 'showAll',
     'clearDB' => 'clearDB',
+    'parseLog'=> 'parseLog'
 );
 
 switch($q){
@@ -15,22 +16,26 @@ switch($q){
         $databaseHandler = new Database();
         $rows = $databaseHandler->getData();
 
+        // Формируем таблицу результатов запроса
         for ($i = 0; $i < 5; $i++){
             $dates[$i] = date('Y-m-d', strtotime($startDate . '+ ' . $i .' day'));
         }
         $table = array();
         foreach($rows as $row) {
             foreach ($dates as $date){
-//                var_dump(date('Y-m-d', strtotime($row['date_time'])));
-                if (date('Y-m-d', strtotime($row['date_time'])) == $date
-                && $row['action_type'] == 'logged in'){
-                    $table[$row['username']][$date] = $row['date_time'];
+                if (date('Y-m-d', strtotime($row['date_time'])) == $date){
+                    $row['date_time'] = date('H:i', strtotime($row['date_time']));
+                    if ($row['action_type'] == 'logged in'){
+                        $table[$row['username']][$date] = $row['date_time'];
+                    } elseif ($row['action_type'] == 'logged out'
+                        && isset($table[$row['username']][$date])){
+                        $table[$row['username']][$date] .= ' -- ' . $row['date_time'];
+                    }
                 }
             }
         }
 
-        // Формируем таблицу с результатов запроса
-        $dates = array();
+        // Выводим таблицу
         echo "<table border='1'>
             <tr>
             <th>Username</th>";
@@ -51,21 +56,10 @@ switch($q){
             }
             echo "</tr>";
         }
-
-//        foreach($rows as $key => $row) {
-//            echo "<tr>";
-//            echo "<td>" . $row['username'] . "</td>";
-//            echo "<td>";
-//                if (date('Y-m-d', strtotime($row['date_time']))){
-//                    echo date('Y-m-d', strtotime($row['date_time']));
-//                }
-//            echo "</td>";
-//            echo "<td>" . $row['date_time'] . "</td>";
-//            echo "</tr>";
-//        }
         echo "</table>";
 
         break;
+    // Действие "Очистить таблицу в БД"
     case $routing['clearDB']:
         // Подключаем класс, отвечающий за работу с бд
         require_once(dirname(__FILE__) . '/Database.php');
@@ -77,20 +71,8 @@ switch($q){
         }
 
         break;
+    // Действие "Распарсить логи Керио и записать данные в базу" @todo реализовать
+    case $routing['parseLog']:
+        break;
 }
-
-//$q = intval($_GET['q']);
-
-//$con = mysqli_connect('localhost','peter','abc123','my_db');
-//if (!$con) {
-//    die('Could not connect: ' . mysqli_error($con));
-//}
-//
-//mysqli_select_db($con,"ajax_demo");
-//$sql="SELECT * FROM user WHERE id = '".$q."'";
-//$result = mysqli_query($con,$sql);
-
-//
-//mysqli_close($con);
-
 ?>
