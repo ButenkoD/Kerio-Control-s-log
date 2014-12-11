@@ -10,8 +10,8 @@ class Database
 {
     const DB_SERVER_NAME = 'localhost';
     const DB_USERNAME = 'root';
-    const DB_PASSWORD = '';
-    const DB_NAME = 'kerio-log';
+    const DB_PASSWORD = 'ftftr';
+    const DB_NAME = 'kerio_control';
 
     private $tableName = 'log';
 
@@ -56,8 +56,12 @@ class Database
     public function getData(array $parameters = array())
     {
         $conn = $this->setConnection();
-        if (empty($parameters)){
-            $sql = "SELECT * FROM $this->tableName;";
+        if (empty($parameters)) {
+            $sql = "SELECT * FROM $this->tableName ORDER BY username;";
+        } else {
+            $sql = "SELECT * FROM $this->tableName ORDER BY username, date_time ASC";
+        }
+
             if ($result = mysqli_query($conn, $sql)) {
                 $data = array();
                 while ($row = mysqli_fetch_array($result)){
@@ -66,7 +70,6 @@ class Database
             } else {
                 echo "Error: " . $sql . "<br>" . $conn->error;
             }
-        }
         $conn->close();
 
         return isset($data)? $data : 'Error';

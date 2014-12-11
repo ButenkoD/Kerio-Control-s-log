@@ -12,7 +12,7 @@ switch($q){
         // Подключаем класс, отвечающий за работу с бд
         require_once(dirname(__FILE__) . '/Database.php');
         $databaseHandler = new Database();
-        $rows = $databaseHandler->getData();
+        $rows = $databaseHandler->getData(array(0 => 666));
         // Формируем таблицу с результатов запроса
         echo "<table border='1'>
             <tr>
@@ -31,7 +31,7 @@ switch($q){
         echo "</table>";
 
         break;
-    case $routing['clear']:
+    case $routing['clearDB']:
         // Подключаем класс, отвечающий за работу с бд
         require_once(dirname(__FILE__) . '/Database.php');
         $databaseHandler = new Database();
