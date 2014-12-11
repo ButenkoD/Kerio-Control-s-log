@@ -20,7 +20,7 @@ class Database
         return $conn;
     }
 
-    public function saveParsedData($data)
+    public function saveParsedData(array $data)
     {
         $conn = $this->setConnection();
         $sql = "INSERT INTO log (username, action_type, date_time)
@@ -45,5 +45,10 @@ class Database
         }
 
         $conn->close();
+    }
+
+    public function getData(array $parameters)
+    {
+
     }
 }
