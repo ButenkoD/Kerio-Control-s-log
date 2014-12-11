@@ -8,9 +8,12 @@
 
 class Parser
 {
-    const PRE_USERNAME_STRING = '[User]';
-    const PRE_LOG_IN_STRING   = 'logged in';
-    const PRE_LOG_OUT_STRING  = 'logged out';
+    const PRE_USERNAME_STRING_WHILE_LOG_IN  = "[User]";
+    const PRE_USERNAME_STRING_WHILE_LOG_OUT = 'User';
+    const PRE_LOG_IN_STRING                 = 'logged in';
+    const PRE_LOG_OUT_STRING                = 'logged out';
+    const TIME_START_STRING                 = '[';
+    const TIME_END_STRING                   = ']';
 
     public function parseString($log)
     {
@@ -21,12 +24,27 @@ class Parser
                 && !(strpos($record, self::PRE_LOG_OUT_STRING))){
                 continue;
             }
-            $recordElements = explode(' ', $record);
-            $result[''] = $recordElements[array_keys($recordElements, 'logged')[0]+2]
-                . ' '
-                . $recordElements[array_keys($recordElements, 'logged')[0]+3];
+            if ($begining = strpos($record, self::PRE_USERNAME_STRING_WHILE_LOG_IN)){
+                $actionType = self::PRE_LOG_IN_STRING;
+                $tail = substr($record, $begining + strlen(self::PRE_USERNAME_STRING_WHILE_LOG_IN) + 1);
+                $username = substr($tail, 0, strpos($tail, ' '));
+            } elseif ($begining = strpos($record, self::PRE_USERNAME_STRING_WHILE_LOG_OUT)){
+                $actionType = self::PRE_LOG_OUT_STRING;
+                $tail = substr($record, $begining + strlen(self::PRE_USERNAME_STRING_WHILE_LOG_OUT) + 1);
+                $username = substr($tail, 0, strpos($tail, ' '));
+            }
 
-            $result[] = $record;
+            $datetime = substr(
+                $record,
+                strpos($record, self::TIME_START_STRING) + strlen(self::TIME_START_STRING),
+                strpos($record, self::TIME_END_STRING) - strlen(self::TIME_END_STRING)
+            );
+
+            $result[] = array(
+                'username' => $username,
+                'action'   => $actionType,
+                'datetime' => $datetime
+            );
         }
         return $result;
     }

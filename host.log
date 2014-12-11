@@ -1,3 +1,5 @@
-qweqwe qweqwe qweqwe [User] someName qwe logged in 12/10/2014 12:13:00
-qweqwe qweqwe qweqwe [User] someOtherName qwe logged out 12/10/2014 10:10:15
-qweqwe qweqwe qweqwe [User] someOtherName qwe
+[10/Dec/2014 15:41:28] [IPv4] 192.168.1.124 [MAC] 14-da-e9-9c-91-d5 (ASUSTek COMPUTER INC.) - Host registered
+[10/Dec/2014 15:41:28] [IPv4] 192.168.1.124 [MAC] 14-da-e9-9c-91-d5 (ASUSTek COMPUTER INC.) [User] Dima - User logged in
+[10/Dec/2014 15:41:31] [IPv4] 192.168.1.124 [MAC] 14-da-e9-9c-91-d5 (ASUSTek COMPUTER INC.) [Hostname] kanni-system-product-name.dlink - User Dima logged out
+[10/Dec/2014 15:45:54] [IPv4] 192.168.1.124 [MAC] 14-da-e9-9c-91-d5 (ASUSTek COMPUTER INC.) [Hostname] kanni-system-product-name.dlink [User] Admin - User logged in
+[10/Dec/2014 15:45:59] [IPv4] 192.168.1.124 [MAC] 14-da-e9-9c-91-d5 (ASUSTek COMPUTER INC.) [Hostname] kanni-system-product-name.dlink - User Admin logged out
