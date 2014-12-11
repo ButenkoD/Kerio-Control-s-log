@@ -8,10 +8,17 @@
 
 class Database
 {
+    const DB_SERVER_NAME = 'localhost';
+    const DB_USERNAME = 'root';
+    const DB_PASSWORD = 'ftftr';
+    const DB_NAME = 'kerio_control';
+
+    private $tableName = 'log';
+
     private function setConnection()
     {
         // Create connection
-        $conn = new mysqli(DB_SERVER_NAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
+        $conn = new mysqli(self::DB_SERVER_NAME, self::DB_USERNAME, self::DB_PASSWORD, self::DB_NAME);
         // Check connection
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
@@ -23,7 +30,7 @@ class Database
     public function saveParsedData(array $data)
     {
         $conn = $this->setConnection();
-        $sql = "INSERT INTO log (username, action_type, date_time)
+        $sql = "INSERT INTO $this->tableName (username, action_type, date_time)
                 VALUES";
         foreach($data as $record){
             $sql .= "('"
@@ -34,7 +41,6 @@ class Database
                 .$record['datetime']
                 ."', '%d/%b/%Y %T')), ";
         }
-
         $sql = substr($sql, 0, strrpos($sql, ','));
         $sql .= ";";
 
@@ -47,8 +53,22 @@ class Database
         $conn->close();
     }
 
-    public function getData(array $parameters)
+    public function getData(array $parameters = array())
     {
+        $conn = $this->setConnection();
+        if (empty($parameters)){
+            $sql = "SELECT * FROM $this->tableName;";
+            if ($result = mysqli_query($conn, $sql)) {
+                $data = array();
+                while ($row = mysqli_fetch_array($result)){
+                    $data[] = $row;
+                }
+            } else {
+                echo "Error: " . $sql . "<br>" . $conn->error;
+            }
+        }
+        $conn->close();
 
+        return isset($data)? $data : 'Error';
     }
 }
