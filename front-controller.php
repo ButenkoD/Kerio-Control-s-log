@@ -1,6 +1,5 @@
 <?php
 $q = $_GET['q'];
-$startDate = $_GET['start_date'];
 
 $routing = array(
     'showAll' => 'showAll',
@@ -10,11 +9,25 @@ $routing = array(
 switch($q){
     // Действие "Показать все логи"
     case $routing['showAll']:
+        $startDate = $_GET['start_date'];
         // Подключаем класс, отвечающий за работу с бд
         require_once(dirname(__FILE__) . '/Database.php');
         $databaseHandler = new Database();
         $rows = $databaseHandler->getData();
-        var_dump($rows);die();
+
+        for ($i = 0; $i < 5; $i++){
+            $dates[$i] = date('Y-m-d', strtotime($startDate . '+ ' . $i .' day'));
+        }
+        $table = array();
+        foreach($rows as $row) {
+            foreach ($dates as $date){
+//                var_dump(date('Y-m-d', strtotime($row['date_time'])));
+                if (date('Y-m-d', strtotime($row['date_time'])) == $date
+                && $row['action_type'] == 'logged in'){
+                    $table[$row['username']][$date] = $row['date_time'];
+                }
+            }
+        }
 
         // Формируем таблицу с результатов запроса
         $dates = array();
@@ -25,20 +38,31 @@ switch($q){
                 $dates[$i] = date('Y-m-d', strtotime($startDate . '+ ' . $i .' day'));
                 echo "<th>" . $dates[$i] . "</th>";
             }
-            echo "<th>Time</th>
-            </tr>";
+//            echo "<th>Time</th>
+            echo "</tr>";
 
-        foreach($rows as $key => $row) {
+        foreach($table as $key => $tableRow) {
             echo "<tr>";
-            echo "<td>" . $row['username'] . "</td>";
-            echo "<td>";
-                if (date('Y-m-d', strtotime($row['date_time']))){
-                    echo date('Y-m-d', strtotime($row['date_time']));
-                }
-            echo "</td>";
-            echo "<td>" . $row['date_time'] . "</td>";
+            echo "<td>" . $key . "</td>";
+            foreach($tableRow as $rowItem){
+                echo "<td>";
+                echo isset($rowItem) ? $rowItem : '----';
+                echo "</td>";
+            }
             echo "</tr>";
         }
+
+//        foreach($rows as $key => $row) {
+//            echo "<tr>";
+//            echo "<td>" . $row['username'] . "</td>";
+//            echo "<td>";
+//                if (date('Y-m-d', strtotime($row['date_time']))){
+//                    echo date('Y-m-d', strtotime($row['date_time']));
+//                }
+//            echo "</td>";
+//            echo "<td>" . $row['date_time'] . "</td>";
+//            echo "</tr>";
+//        }
         echo "</table>";
 
         break;
