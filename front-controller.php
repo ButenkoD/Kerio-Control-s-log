@@ -21,7 +21,7 @@ switch($q){
         // Подключаем класс, отвечающий за работу с бд
         require_once(dirname(__FILE__) . '/Database.php');
         $databaseHandler = new Database($configs['db']);
-        $rows = $databaseHandler->getData();
+        $rows = $databaseHandler->getData($startDate);
 
         // Формируем таблицу результатов запроса
         $dates = array();
@@ -29,13 +29,11 @@ switch($q){
             $dates[$i] = date('Y-m-d', strtotime($startDate . '+ ' . $i .' day'));
         }
 
-        include('view.php');
-
         $table = array();
         foreach($rows as $row) {
             foreach ($dates as $date){
                 if (date('Y-m-d', strtotime($row['date_time'])) == $date){
-                    $row['date_time'] = date('H:i', strtotime($row['date_time']));
+                    $row['date_time'] = date('H:i:s', strtotime($row['date_time']));
                     if ($row['action_type'] == 'logged in'){
                         $table[$row['username']][$date] = $row['date_time'];
                     } elseif ($row['action_type'] == 'logged out'
@@ -45,6 +43,8 @@ switch($q){
                 }
             }
         }
+
+        include('view.php');
 
         // Выводим таблицу
         echo "<table border='1'>

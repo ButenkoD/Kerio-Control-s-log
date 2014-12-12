@@ -6,12 +6,8 @@
  * Time: 13:23
  */
 
+//@TODO create Mailer class
+
 class Mailer
 {
-    public $path = '1234567';
-
-    public function getPath()
-    {
-        return $this->path;
-    }
 }

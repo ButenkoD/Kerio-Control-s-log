@@ -1,5 +1,5 @@
 
-Module for saving and demonstration data parsed from Kerio Control's logs
+Base for module which saves and demonstrates data parsed from Kerio Control's logs
 
 1. Use 'log.sql' file to create table 'log'.
 2. Edit 'config.php' file:
