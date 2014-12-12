@@ -33,12 +33,17 @@ switch($q){
         foreach($rows as $row) {
             foreach ($dates as $date){
                 if (date('Y-m-d', strtotime($row['date_time'])) == $date){
-                    $row['date_time'] = date('H:i:s', strtotime($row['date_time']));
+                    $row['date_time'] = date('H:i', strtotime($row['date_time']));
                     if ($row['action_type'] == 'logged in'){
-                        $table[$row['username']][$date] = $row['date_time'];
+//                    $row['date_time']['late'] = (bool)(date('H:i', strtotime($row['date_time'])) > date('H:i', strtotime('09:15')));
+//                        $table[$row['username']][$date] = $row['date_time'];
+                        $table[$row['username']][$date]['value'] = $row['date_time'];
+                        $table[$row['username']][$date]['late'] = (bool)(date('H:i', strtotime($row['date_time'])) > date('H:i', strtotime('09:15')));
                     } elseif ($row['action_type'] == 'logged out'
-                        && isset($table[$row['username']][$date])){
-                        $table[$row['username']][$date] .= ' -- ' . $row['date_time'];
+//                        && isset($table[$row['username']][$date])){
+                        && isset($table[$row['username']][$date]['value'])){
+//                        $table[$row['username']][$date] .= ' -- ' . $row['date_time'];
+                        $table[$row['username']][$date]['value'] .= ' -- ' . $row['date_time'];
                     }
                 }
             }
@@ -60,9 +65,15 @@ switch($q){
             echo "<tr>";
             echo "<td>" . $key . "</td>";
             foreach($tableRow as $rowItem){
-                echo "<td>";
-                echo isset($rowItem) ? $rowItem : '----';
-                echo "</td>";
+                if (isset($rowItem['value'])){
+                    if ($rowItem['late']){
+                        echo '<td style="color:red;">'.$rowItem['value'].'</td>';
+                    } else {
+                        echo '<td>'.$rowItem['value'].'</td>';
+                    }
+                } else {
+                    echo '<td>----</td>';
+                }
             }
             echo "</tr>";
         }
