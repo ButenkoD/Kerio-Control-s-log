@@ -27,12 +27,11 @@ class Parser
             if ($begining = strpos($record, self::PRE_USERNAME_STRING_WHILE_LOG_IN)){
                 $actionType = self::PRE_LOG_IN_STRING;
                 $tail = substr($record, $begining + strlen(self::PRE_USERNAME_STRING_WHILE_LOG_IN) + 1);
-                $username = substr($tail, 0, strpos($tail, ' '));
             } elseif ($begining = strpos($record, self::PRE_USERNAME_STRING_WHILE_LOG_OUT)){
                 $actionType = self::PRE_LOG_OUT_STRING;
                 $tail = substr($record, $begining + strlen(self::PRE_USERNAME_STRING_WHILE_LOG_OUT) + 1);
-                $username = substr($tail, 0, strpos($tail, ' '));
             }
+            $username = substr($tail, 0, strpos($tail, ' '));
 
             $datetime = substr(
                 $record,

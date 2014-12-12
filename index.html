@@ -3,13 +3,14 @@
 </head>
 <body>
     <form>
+        <label>Start date</label>
         <input type="text" id="start-date" name="date" value="2014-12-05">
         <button onclick="makeRequest('showAll'); return false">Show log records</button>
         <button onclick="makeRequest('clearDB'); return false;">Clear Database</button>
-        <button onclick="makeRequest('parseLog'); return false;">Clear Database</button>
+        <button onclick="makeRequest('parseLog'); return false;">Parse Kerio log file</button>
     </form>
     <br>
-    <div id="txtHint"><b>Person info will be listed here.</b></div>
+    <div id="txtHint"><b>Required info will be listed here.</b></div>
     <script>
         function makeRequest(action) {
             if (window.XMLHttpRequest) {
@@ -25,7 +26,7 @@
                 }
             }
             var start_date = document.getElementById("start-date").value;
-            xmlhttp.open("GET", "front-controller.php?q=" + action + "&start_date=" + start_date, true);
+            xmlhttp.open("GET", "front-controller.php?request_action=" + action + "&start_date=" + start_date, true);
             xmlhttp.send();
         }
     </script>

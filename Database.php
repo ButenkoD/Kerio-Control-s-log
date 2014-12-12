@@ -8,17 +8,27 @@
 
 class Database
 {
-    const DB_SERVER_NAME = 'localhost';
-    const DB_USERNAME = 'root';
-    const DB_PASSWORD = 'ftftr';
-    const DB_NAME = 'kerio_control';
-
+    private $dbName;
+    private $serverName;
+    private $username;
+    private $password;
     private $tableName = 'log';
+
+    public function __construct(array $params)
+    {
+        foreach($params as $key => $param){
+            if (property_exists($this, $key)){
+                $this->$key = $param;
+            }
+        }
+
+        return $this;
+    }
 
     private function setConnection()
     {
         // Create connection
-        $conn = new mysqli(self::DB_SERVER_NAME, self::DB_USERNAME, self::DB_PASSWORD, self::DB_NAME);
+        $conn = new mysqli($this->serverName, $this->username, $this->password, $this->dbName);
         // Check connection
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
@@ -45,7 +55,7 @@ class Database
         $sql .= ";";
 
         if ($conn->query($sql) === TRUE) {
-            echo "New record created successfully";
+            echo "New records were created successfully";
         } else {
             echo "Error: " . $sql . "<br>" . $conn->error;
         }
@@ -74,8 +84,10 @@ class Database
         $conn = $this->setConnection();
         $sql = "TRUNCATE TABLE $this->tableName;";
         if (mysqli_query($conn, $sql)){
+            $conn->close();
             return true;
         } else {
+            $conn->close();
             return "Error: " . $sql . "<br>" . $conn->error;
         }
     }

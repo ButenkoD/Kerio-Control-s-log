@@ -1,6 +1,11 @@
 <?php
-$q = $_GET['q'];
+// get type of action that should be performed
+$q = $_GET['request_action'];
 
+// plug in configuration data
+$configs = include('config.php');
+
+// list of available actions
 $routing = array(
     'showAll' => 'showAll',
     'clearDB' => 'clearDB',
@@ -10,16 +15,22 @@ $routing = array(
 switch($q){
     // Действие "Показать все логи"
     case $routing['showAll']:
+        // Извлекаем из запроса параметр: дату, начиная с которой следует выводить логи
         $startDate = $_GET['start_date'];
+
         // Подключаем класс, отвечающий за работу с бд
         require_once(dirname(__FILE__) . '/Database.php');
-        $databaseHandler = new Database();
+        $databaseHandler = new Database($configs['db']);
         $rows = $databaseHandler->getData();
 
         // Формируем таблицу результатов запроса
+        $dates = array();
         for ($i = 0; $i < 5; $i++){
             $dates[$i] = date('Y-m-d', strtotime($startDate . '+ ' . $i .' day'));
         }
+
+        include('view.php');
+
         $table = array();
         foreach($rows as $row) {
             foreach ($dates as $date){
@@ -43,7 +54,6 @@ switch($q){
                 $dates[$i] = date('Y-m-d', strtotime($startDate . '+ ' . $i .' day'));
                 echo "<th>" . $dates[$i] . "</th>";
             }
-//            echo "<th>Time</th>
             echo "</tr>";
 
         foreach($table as $key => $tableRow) {
@@ -63,7 +73,7 @@ switch($q){
     case $routing['clearDB']:
         // Подключаем класс, отвечающий за работу с бд
         require_once(dirname(__FILE__) . '/Database.php');
-        $databaseHandler = new Database();
+        $databaseHandler = new Database($configs['db']);
         if ($result = $databaseHandler->clearLogData() === true){
             echo "DB's table was truncated";
         } else {
@@ -71,8 +81,21 @@ switch($q){
         }
 
         break;
-    // Действие "Распарсить логи Керио и записать данные в базу" @todo реализовать
+    // Действие "Распарсить логи Керио и записать данные в базу"
     case $routing['parseLog']:
+        // Подключаем парсер логов
+        require_once(dirname(__FILE__) . '/Parser.php');
+        // Подключаем класс, отвечающий за работу с бд
+        require_once(dirname(__FILE__) . '/Database.php');
+
+        $log = file_get_contents($configs['log_file_path']);
+
+        $parser = new Parser();
+        $data = $parser->parseString($log);
+
+        $databaseHandler = new Database($configs['db']);
+        $databaseHandler->saveParsedData($data);
+
         break;
 }
 ?>
