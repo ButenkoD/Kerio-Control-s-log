@@ -66,7 +66,8 @@ class Database
     public function getData($startDate)
     {
         $conn = $this->setConnection();
-        $sql = "SELECT * FROM $this->tableName WHERE date_time > $startDate ORDER BY username, date_time ASC";
+//        $sql = "SELECT * FROM $this->tableName WHERE date_time > $startDate AND username = 'AndersenPhones' ORDER BY username, date_time ASC";
+        $sql = "SELECT * FROM $this->tableName WHERE date_time >= '$startDate' ORDER BY username, date_time ASC";
         if ($result = mysqli_query($conn, $sql)) {
             $data = array();
             while ($row = mysqli_fetch_array($result)){

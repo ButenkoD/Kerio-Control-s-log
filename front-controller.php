@@ -34,16 +34,24 @@ switch($q){
             foreach ($dates as $date){
                 if (date('Y-m-d', strtotime($row['date_time'])) == $date){
                     $row['date_time'] = date('H:i', strtotime($row['date_time']));
+//                    if ($row['action_type'] == 'logged in'){
+//                        if (isset($table[$row['username']][$date]['value'])){
+//                            $table[$row['username']][$date]['value'] .= '</br>'.$row['date_time'];
+//                        } else {
+//                            $table[$row['username']][$date]['value'] = $row['date_time'];
+//                            $table[$row['username']][$date]['late'] = (bool)(date('H:i', strtotime($row['date_time'])) > date('H:i', strtotime('09:15')));
+//                        }
+//                    } elseif ($row['action_type'] == 'logged out'
+//                        && isset($table[$row['username']][$date]['value'])){
+//                        $table[$row['username']][$date]['value'] .= ' -- ' . $row['date_time'];
+//                    }
                     if ($row['action_type'] == 'logged in'){
-//                    $row['date_time']['late'] = (bool)(date('H:i', strtotime($row['date_time'])) > date('H:i', strtotime('09:15')));
-//                        $table[$row['username']][$date] = $row['date_time'];
-                        $table[$row['username']][$date]['value'] = $row['date_time'];
-                        $table[$row['username']][$date]['late'] = (bool)(date('H:i', strtotime($row['date_time'])) > date('H:i', strtotime('09:15')));
-                    } elseif ($row['action_type'] == 'logged out'
-//                        && isset($table[$row['username']][$date])){
-                        && isset($table[$row['username']][$date]['value'])){
-//                        $table[$row['username']][$date] .= ' -- ' . $row['date_time'];
-                        $table[$row['username']][$date]['value'] .= ' -- ' . $row['date_time'];
+                        if (!isset($table[$row['username']][$date]['valueIn'])){
+                            $table[$row['username']][$date]['valueIn'] = $row['date_time'];
+                            $table[$row['username']][$date]['late'] = (bool)(date('H:i', strtotime($row['date_time'])) > date('H:i', strtotime('09:15')));
+                        }
+                    } elseif ($row['action_type'] == 'logged out'){
+                        $table[$row['username']][$date]['valueOut'] = ' -- ' . $row['date_time'];
                     }
                 }
             }
@@ -64,16 +72,27 @@ switch($q){
         foreach($table as $key => $tableRow) {
             echo "<tr>";
             echo "<td>" . $key . "</td>";
-            foreach($tableRow as $rowItem){
-                if (isset($rowItem['value'])){
-                    if ($rowItem['late']){
-                        echo '<td style="color:red;">'.$rowItem['value'].'</td>';
+
+            foreach($dates as $date){
+                if (isset($tableRow[$date]) && isset($tableRow[$date]['valueIn']) && isset($tableRow[$date]['valueOut'])){
+                    if ($tableRow[$date]['late']){
+                        echo '<td style="color:red;">'.$tableRow[$date]['valueIn'].$tableRow[$date]['valueOut'].'</td>';
                     } else {
-                        echo '<td>'.$rowItem['value'].'</td>';
+                        echo '<td>'.$tableRow[$date]['valueIn'].$tableRow[$date]['valueOut'].'</td>';
                     }
                 } else {
                     echo '<td>----</td>';
                 }
+//            foreach($tableRow as $key => $rowItem){
+//                if (isset($rowItem['value'])){
+//                    if ($rowItem['late']){
+//                        echo '<td style="color:red;">'.$rowItem['value'].'</td>';
+//                    } else {
+//                        echo '<td>'.$rowItem['value'].'</td>';
+//                    }
+//                } else {
+//                    echo '<td>----</td>';
+//                }
             }
             echo "</tr>";
         }
