@@ -74,25 +74,18 @@ switch($q){
             echo "<td>" . $key . "</td>";
 
             foreach($dates as $date){
-                if (isset($tableRow[$date]) && isset($tableRow[$date]['valueIn']) && isset($tableRow[$date]['valueOut'])){
-                    if ($tableRow[$date]['late']){
-                        echo '<td style="color:red;">'.$tableRow[$date]['valueIn'].$tableRow[$date]['valueOut'].'</td>';
+
+                if (isset($tableRow[$date])){
+                    $value = isset($tableRow[$date]['valueIn']) ? $tableRow[$date]['valueIn']: '';
+                    $value .= isset($tableRow[$date]['valueOut']) ? $tableRow[$date]['valueOut'] : '';
+                    if (isset($tableRow[$date]['late']) && $tableRow[$date]['late']){
+                        echo '<td style="color:red;">'.$value.'</td>';
                     } else {
-                        echo '<td>'.$tableRow[$date]['valueIn'].$tableRow[$date]['valueOut'].'</td>';
+                        echo '<td>'.$value.'</td>';
                     }
                 } else {
                     echo '<td>----</td>';
                 }
-//            foreach($tableRow as $key => $rowItem){
-//                if (isset($rowItem['value'])){
-//                    if ($rowItem['late']){
-//                        echo '<td style="color:red;">'.$rowItem['value'].'</td>';
-//                    } else {
-//                        echo '<td>'.$rowItem['value'].'</td>';
-//                    }
-//                } else {
-//                    echo '<td>----</td>';
-//                }
             }
             echo "</tr>";
         }
