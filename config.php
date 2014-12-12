@@ -11,7 +11,7 @@ return [
         'dbName' => 'kerio_control',
         'serverName' => 'localhost',
         'username' => 'root',
-        'password' => 'ftftr'
+        'password' => 'mysql'
     ],
     'log_file_path' => dirname(__FILE__) . '/host.log'
 ];
