@@ -13,14 +13,16 @@
 <form>
     <label>Start date</label>
     <input type="text" id="start-date" name="date" value="2014-12-05">
-    <button onclick="makeRequest('showAll'); return false">Show log records</button>
-    <button onclick="makeRequest('clearDB'); return false;">Clear Database</button>
-    <button onclick="makeRequest('parseLog'); return false;">Parse Kerio log file</button>
+    <button onclick="makeRequest('showAll');">Show log records</button>
+    <button onclick="makeRequest('clearDB');">Clear Database</button>
+    <button onclick="makeRequest('parseLog');">Parse Kerio log file</button>
 </form>
 <br>
 <div id="txtHint"><b>Required info will be listed here.</b></div>
 <script>
     function makeRequest(action) {
+        event.preventDefault();
+
         if (window.XMLHttpRequest) {
             // code for IE7+, Firefox, Chrome, Opera, Safari
             xmlhttp = new XMLHttpRequest();
