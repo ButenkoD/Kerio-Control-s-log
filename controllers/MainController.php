@@ -67,12 +67,13 @@ class MainController {
      */
     public function parseLogAction() {
         $config = Config::getInstance();
-        $log = file_get_contents($config->get('log_file_path'));
+//        $log = file_get_contents($config->get('log_file_path'));
 
         $databaseHandler = new Database();
         $parser = new Parser($databaseHandler->getLatestDate());
+        $log = $parser->getLog($config->get('log_file_path'));
+//        $data = $parser->parseString($parser->getLog($config->get('log_file_path')));
         $data = $parser->parseString($log);
-
         $databaseHandler->saveParsedData($data);
     }
 }

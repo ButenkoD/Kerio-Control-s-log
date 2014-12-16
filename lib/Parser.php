@@ -32,8 +32,9 @@ class Parser
     public function parseString($log)
     {
         // разбиваем на строки
-        $records = explode("\n", $log);
-
+//        $records = explode("\n", $log);
+        $records = $log;
+//
         $result = [];
         foreach($records as $record) {
             if (!(strpos($record, self::PRE_LOG_IN_STRING))
@@ -58,7 +59,7 @@ class Parser
                 strpos($record, self::TIME_END_STRING) - strlen(self::TIME_END_STRING)
             );
             // @TODO check if there's need to continue parsing
-            date_create_from_format('d/M/Y H:i:s', $datetime)->getTimestamp();
+//            date_create_from_format('d/M/Y H:i:s', $datetime)->getTimestamp();
 
             $result[] = [
                 'username' => $username,
@@ -68,5 +69,32 @@ class Parser
         }
 
         return $result;
+    }
+
+    public function getLog($path)
+    {
+        $fp = fopen($path, 'r');
+
+        $pos = -2; // Skip final new line character (Set to -1 if not present)
+
+        $lines = array();
+        $currentLine = '';
+
+//        while (-1 !== fseek($fp, $pos, SEEK_END)) {
+        while (-1 !== fseek($fp, $pos, SEEK_END) && $pos > -1000000) {
+            $char = fgetc($fp);
+            if (PHP_EOL == $char) {
+                yield $currentLine;
+//                $lines[] = $currentLine;
+                $currentLine = '';
+            } else {
+                $currentLine = $char . $currentLine;
+            }
+            $pos--;
+        }
+
+        $lines[] = $currentLine; // Grab final line
+
+//        return $lines;
     }
 }
