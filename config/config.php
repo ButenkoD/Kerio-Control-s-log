@@ -7,6 +7,6 @@ return [
         'username' => 'root',
         'password' => 'mysql'
     ],
-    'log_file_path' => __DIR__ . '/../host.log',
+    'log_file_path' => __DIR__ . '/../data/host.log',
     'showDayNumber' => 5,
 ];
