@@ -15,12 +15,21 @@ class Parser
     const TIME_START_STRING                 = '[';
     const TIME_END_STRING                   = ']';
 
+    private $latestDate;
+
+    public function __construct($latestDate)
+    {
+        $this->latestDate = strtotime($latestDate);
+
+        return $this;
+    }
+
     /**
      * Парсинг лога
      * @param string $log
      * @return array
      */
-    public static function parseString($log)
+    public function parseString($log)
     {
         // разбиваем на строки
         $records = explode("\n", $log);
@@ -48,6 +57,8 @@ class Parser
                 strpos($record, self::TIME_START_STRING) + strlen(self::TIME_START_STRING),
                 strpos($record, self::TIME_END_STRING) - strlen(self::TIME_END_STRING)
             );
+            // @TODO check if there's need to continue parsing
+            date_create_from_format('d/M/Y H:i:s', $datetime)->getTimestamp();
 
             $result[] = [
                 'username' => $username,

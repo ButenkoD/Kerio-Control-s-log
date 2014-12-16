@@ -86,4 +86,17 @@ class Database
             return "Error: " . $sql . "<br>" . $conn->error;
         }
     }
+
+    public function getLatestDate()
+    {
+        $conn = $this->setConnection();
+        $sql = "SELECT MAX(date_time) FROM $this->tableName;";
+        if ($result = mysqli_query($conn, $sql)){
+            $conn->close();
+            return mysqli_fetch_array($result)[0];
+        } else {
+            $conn->close();
+            return "Error: " . $sql . "<br>" . $conn->error;
+        }
+    }
 }

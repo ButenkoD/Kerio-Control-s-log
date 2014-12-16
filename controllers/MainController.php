@@ -69,10 +69,10 @@ class MainController {
         $config = Config::getInstance();
         $log = file_get_contents($config->get('log_file_path'));
 
-        $parser = new Parser();
+        $databaseHandler = new Database();
+        $parser = new Parser($databaseHandler->getLatestDate());
         $data = $parser->parseString($log);
 
-        $databaseHandler = new Database();
         $databaseHandler->saveParsedData($data);
     }
 }
