@@ -1,42 +1,29 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: apedan
- * Date: 12.12.14
- * Time: 13:12
- */
-?>
-<html>
-<head>
-</head>
-<body>
-<form>
-    <label>Start date</label>
-    <input type="text" id="start-date" name="date" value="2014-12-05">
-    <button onclick="makeRequest('showAll'); return false">Show log records</button>
-    <button onclick="makeRequest('clearDB'); return false;">Clear Database</button>
-    <button onclick="makeRequest('parseLog'); return false;">Parse Kerio log file</button>
-</form>
-<br>
-<div id="txtHint"><b>Required info will be listed here.</b></div>
-<script>
-    function makeRequest(action) {
-        if (window.XMLHttpRequest) {
-            // code for IE7+, Firefox, Chrome, Opera, Safari
-            xmlhttp = new XMLHttpRequest();
-        } else {
-            // code for IE6, IE5
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                document.getElementById("txtHint").innerHTML = xmlhttp.responseText;
-            }
-        }
-        var start_date = document.getElementById("start-date").value;
-        xmlhttp.open("GET", "front-controller.php?request_action=" + action + "&start_date=" + start_date, true);
-        xmlhttp.send();
-    }
-</script>
-</body>
-</html>
+define('DIRECTORY_SEPARATOR', '/');
+define('CONFIG_PATH', __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR);
+define('LIB_PATH', __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR);
+define('CONTROLLERS_PATH', __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR);
+define('VIEWS_PATH', __DIR__ . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR);
+
+// Подключаем парсер логов
+require_once(LIB_PATH . 'Config.php');
+require_once(LIB_PATH . 'Parser.php');
+// Подключаем класс, отвечающий за работу с бд
+require_once(LIB_PATH . 'Database.php');
+require_once(LIB_PATH . 'View.php');
+
+require_once(CONTROLLERS_PATH . 'MainController.php');
+
+// get type of action that should be performed
+$q = $_GET['request_action'];
+
+$main = new MainController();
+$methodName = "{$q}Action";
+if (method_exists($main, $methodName)) {
+    $main->$methodName();
+}
+
+if (!(bool)$q) {
+    $template = new View();
+    $template->render('main');
+}
