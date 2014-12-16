@@ -1,11 +1,3 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: apedan
- * Date: 12.12.14
- * Time: 13:12
- */
-?>
 <html>
 <head>
 </head>

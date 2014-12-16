@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * Class View
+ */
 class View
 {
     private $data = [];
     private $render;
 
+    /**
+     * @param $template
+     * @param array $params
+     */
     public function render($template, array $params = []) {
         try {
             $file = VIEWS_PATH . strtolower($template) . '.php';
@@ -24,6 +31,10 @@ class View
         }
     }
 
+    /**
+     * @param $variable
+     * @param $value
+     */
     public function assign($variable, $value)
     {
         $this->data[$variable] = $value;
@@ -35,4 +46,3 @@ class View
         include($this->render);
     }
 }
-?>

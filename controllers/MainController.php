@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class MainController
+ */
 class MainController {
     /**
      * Действие "Показать все логи"
@@ -30,17 +33,6 @@ class MainController {
             foreach ($dates as $date){
                 if (date('Y-m-d', strtotime($row['date_time'])) == $date){
                     $row['date_time'] = date('H:i', strtotime($row['date_time']));
-//                    if ($row['action_type'] == 'logged in'){
-//                        if (isset($table[$row['username']][$date]['value'])){
-//                            $table[$row['username']][$date]['value'] .= '</br>'.$row['date_time'];
-//                        } else {
-//                            $table[$row['username']][$date]['value'] = $row['date_time'];
-//                            $table[$row['username']][$date]['late'] = (bool)(date('H:i', strtotime($row['date_time'])) > date('H:i', strtotime('09:15')));
-//                        }
-//                    } elseif ($row['action_type'] == 'logged out'
-//                        && isset($table[$row['username']][$date]['value'])){
-//                        $table[$row['username']][$date]['value'] .= ' -- ' . $row['date_time'];
-//                    }
                     if ($row['action_type'] == 'logged in'){
                         if (!isset($table[$row['username']][$date]['valueIn'])){
                             $table[$row['username']][$date]['valueIn'] = $row['date_time'];
@@ -83,4 +75,4 @@ class MainController {
         $databaseHandler = new Database();
         $databaseHandler->saveParsedData($data);
     }
-} 
+}

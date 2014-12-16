@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Конфигурация (singleton)
+ * Class Config
+ */
 class Config {
     protected static $_instance;
     public $config;
@@ -7,7 +11,7 @@ class Config {
     private function __construct() {
         $this->config = include(CONFIG_PATH . 'config.php');
 
-        // use local config
+        // используем локальный конфиг
         $localConfFile = CONFIG_PATH . 'config_local.php';
         if (file_exists($localConfFile)) {
             $local = include($localConfFile);
@@ -25,6 +29,10 @@ class Config {
 
     private function __clone() {}
 
+    /**
+     * Получить состояние
+     * @return Config
+     */
     public static function getInstance() {
         // проверяем актуальность экземпляра
         if (null === self::$_instance) {
@@ -35,10 +43,15 @@ class Config {
         return self::$_instance;
     }
 
+    /**
+     * Получение настройки с конфига
+     * @param $param
+     * @return bool
+     */
     public function get($param) {
         if (!empty($param) && isset($this->config[$param])) {
             return $this->config[$param];
         }
         return false;
     }
-} 
+}
