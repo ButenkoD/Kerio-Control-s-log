@@ -7,6 +7,7 @@ class Database
     private $username;
     private $password;
     private $tableName = 'log';
+    private $userTableName = 'users';
 
     public function __construct()
     {
@@ -56,6 +57,42 @@ class Database
         }
 
         $conn->close();
+    }
+
+    public function getNextUserId()
+    {
+        $conn = $this->setConnection();
+        $sql = "SHOW TABLE STATUS FROM `kerio_control` LIKE 'users';";
+        if ($result = mysqli_query($conn, $sql)){
+            $return = (int)mysqli_fetch_assoc($result)['Auto_increment'];
+            return $return;
+        }
+    }
+
+    public function saveUser($data)
+    {
+        $conn = $this->setConnection();
+        $sql = "INSERT INTO $this->userTableName (username) VALUE ('".$data['username']."');";
+        if ($conn->query($sql) !== TRUE){
+        }
+        $conn->close();
+    }
+
+    public function getUsers()
+    {
+        $conn = $this->setConnection();
+        $sql = "SELECT * FROM $this->userTableName";
+        if ($result = mysqli_query($conn, $sql)) {
+            $data = array();
+            while ($row = mysqli_fetch_array($result)){
+                $data[] = $row;
+            }
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+        $conn->close();
+
+        return isset($data)? $data : 'Error';
     }
 
     public function getData($startDate, $endDate)
