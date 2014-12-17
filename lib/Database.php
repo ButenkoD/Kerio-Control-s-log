@@ -36,11 +36,13 @@ class Database
     public function saveParsedData(array $data)
     {
         $conn = $this->setConnection();
-        $sql = "INSERT INTO $this->tableName (username, action_type, date_time)
+        $sql = "INSERT INTO $this->tableName (username, user_id, action_type, date_time)
                 VALUES";
         foreach($data as $record){
             $sql .= "('"
                 .$record['username']
+                ."', '"
+                .$record['user_id']
                 ."', '"
                 .$record['action']
                 ."', STR_TO_DATE('"
@@ -75,6 +77,31 @@ class Database
         $sql = "INSERT INTO $this->userTableName (username) VALUE ('".$data['username']."');";
         if ($conn->query($sql) !== TRUE){
         }
+        $conn->close();
+    }
+
+    public function saveUsers($data)
+    {
+        if (empty($data)){
+            return;
+        };
+        $conn = $this->setConnection();
+        $sql = "INSERT INTO $this->userTableName (username)
+                VALUES";
+        foreach($data as $record){
+            $sql .= "('"
+                .$record['username']
+                ."'), ";
+        }
+        $sql = substr($sql, 0, strrpos($sql, ','));
+        $sql .= ";";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "New records were created successfully";
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+
         $conn->close();
     }
 

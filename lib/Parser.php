@@ -34,8 +34,8 @@ class Parser
     public function parseString($log)
     {
         // разбиваем на строки
-//        $records = explode("\n", $log);
-        $records = $log;
+        $records = explode("\n", $log);
+//        $records = $log;
 //
         $result = [];
         $usersData = $this->databaseHandler->getUsers();
@@ -44,8 +44,9 @@ class Parser
         foreach ($usersData as $user){
             $users[$user['id']] = $user['username'];
         }
-        $nextUserId = $this->databaseHandler->getNextUserId();
         $newlyCreatedUsers = [];
+        $nextUserId = $this->databaseHandler->getNextUserId();
+        $i = 0;
 
         foreach($records as $record) {
             if (!(strpos($record, self::PRE_LOG_IN_STRING))
@@ -73,11 +74,17 @@ class Parser
 //            date_create_from_format('d/M/Y H:i:s', $datetime)->getTimestamp();
 
             if (!in_array($username, $users)){
-                $users[(max(array_keys($users))+1)] = $username;
-                $this->databaseHandler->saveUser(['username' => $username]);
+
+//                var_dump($username);
+//                var_dump($users);die();
+                $users[$nextUserId + $i] = $username;
+                $newlyCreatedUsers[] = ['username' => $username];
+//                $this->databaseHandler->saveUser(['username' => $username]);
+                $i++;
             }
             $result[] = [
                 'username' => $username,
+                'user_id'  => array_search($username, $users),
                 'action'   => $actionType,
                 'datetime' => $datetime,
             ];
@@ -88,6 +95,7 @@ class Parser
 //            }
         }
 //        $this->databaseHandler->saveParsedData($result);
+        $this->databaseHandler->saveUsers($newlyCreatedUsers);
         echo 'Hell yeah!';
 
         return $result;
