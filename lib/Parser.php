@@ -38,14 +38,19 @@ class Parser
 //        $records = $log;
 //
         $result = [];
-        $usersData = $this->databaseHandler->getUsers();
+        $userHandler = new UserRepository();
+//        $usersData = $this->databaseHandler->getUsers();
+        $usersData = $userHandler->getUsers();
 
         $users = [];
         foreach ($usersData as $user){
             $users[$user['id']] = $user['username'];
         }
         $newlyCreatedUsers = [];
-        $nextUserId = $this->databaseHandler->getNextUserId();
+//        $nextUserId = $this->databaseHandler->getNextUserId();
+        $nextUserId = $userHandler->getNextUserId();
+
+        //counter for newly created users' ids
         $i = 0;
 
         foreach($records as $record) {
@@ -74,12 +79,8 @@ class Parser
 //            date_create_from_format('d/M/Y H:i:s', $datetime)->getTimestamp();
 
             if (!in_array($username, $users)){
-
-//                var_dump($username);
-//                var_dump($users);die();
                 $users[$nextUserId + $i] = $username;
                 $newlyCreatedUsers[] = ['username' => $username];
-//                $this->databaseHandler->saveUser(['username' => $username]);
                 $i++;
             }
             $result[] = [
@@ -95,12 +96,18 @@ class Parser
 //            }
         }
 //        $this->databaseHandler->saveParsedData($result);
-        $this->databaseHandler->saveUsers($newlyCreatedUsers);
+//        $this->databaseHandler->saveUsers($newlyCreatedUsers);
+        $userHandler->saveUsers($newlyCreatedUsers);
         echo 'Hell yeah!';
 
         return $result;
     }
 
+    /**
+     * Method for yielding log data line by line
+     * @param string $path
+     * @yield string $currentLine
+     */
     public function getLog($path)
     {
         set_time_limit(60);
@@ -123,9 +130,5 @@ class Parser
             }
             $pos--;
         }
-
-//        $lines[] = $currentLine; // Grab final line
-
-//        return $lines;
     }
 }

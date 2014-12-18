@@ -1,6 +1,7 @@
 <?php
 define('CONFIG_PATH', __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR);
 define('LIB_PATH', __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR);
+define('CLASSES_PATH', __DIR__ . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR);
 define('CONTROLLERS_PATH', __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR);
 define('VIEWS_PATH', __DIR__ . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR);
 
@@ -9,7 +10,11 @@ require_once(LIB_PATH . 'Config.php');
 require_once(LIB_PATH . 'Parser.php');
 // Подключаем класс, отвечающий за работу с бд
 require_once(LIB_PATH . 'Database.php');
+require_once(LIB_PATH . 'Repository.php');
 require_once(LIB_PATH . 'View.php');
+
+require_once(CLASSES_PATH . 'UserRepository.php');
+require_once(CLASSES_PATH . 'LogRepository.php');
 
 require_once(CONTROLLERS_PATH . 'MainController.php');
 

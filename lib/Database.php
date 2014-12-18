@@ -61,25 +61,6 @@ class Database
         $conn->close();
     }
 
-    public function getNextUserId()
-    {
-        $conn = $this->setConnection();
-        $sql = "SHOW TABLE STATUS FROM `kerio_control` LIKE 'users';";
-        if ($result = mysqli_query($conn, $sql)){
-            $return = (int)mysqli_fetch_assoc($result)['Auto_increment'];
-            return $return;
-        }
-    }
-
-    public function saveUser($data)
-    {
-        $conn = $this->setConnection();
-        $sql = "INSERT INTO $this->userTableName (username) VALUE ('".$data['username']."');";
-        if ($conn->query($sql) !== TRUE){
-        }
-        $conn->close();
-    }
-
     public function saveUsers($data)
     {
         if (empty($data)){
@@ -141,6 +122,7 @@ class Database
 
     public function clearLogData(){
         $conn = $this->setConnection();
+        $conn1 = $this->setConnection();
         $sql = "TRUNCATE TABLE $this->tableName;";
         if (mysqli_query($conn, $sql)){
             $conn->close();

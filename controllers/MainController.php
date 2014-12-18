@@ -54,6 +54,7 @@ class MainController {
      * Действие "Очистить таблицу в БД"
      */
     public function clearDBAction() {
+        $userRepository = new UserRepository();
         $databaseHandler = new Database();
         if ($result = $databaseHandler->clearLogData() === true){
             echo "DB's table was truncated";
