@@ -8,12 +8,20 @@ class Parser
     /**
      * Конфиг синтаксиса лога
      */
-    const PRE_USERNAME_STRING_WHILE_LOG_IN  = "[User]";
+    /*const PRE_USERNAME_STRING_WHILE_LOG_IN = "[User]";
     const PRE_USERNAME_STRING_WHILE_LOG_OUT = 'User';
-    const PRE_LOG_IN_STRING                 = 'logged in';
-    const PRE_LOG_OUT_STRING                = 'logged out';
-    const TIME_START_STRING                 = '[';
-    const TIME_END_STRING                   = ']';
+    const PRE_LOG_IN_STRING = 'logged in';
+    const PRE_LOG_OUT_STRING = 'logged out';
+    const TIME_START_STRING = '[';
+    const TIME_END_STRING = ']';*/
+
+    const INDX_DATE = 1;
+    const INDX_UNAME = 2;
+    const INDX_ACTION = 3;
+
+    const PRE_MATCH_USER_LOG = '/\[(\d{2}\/\w{3}\/\d{4} \d{2}:\d{2}:\d{2})\].*\[IPv4\]\s192\.168\.\d+\.\d+.*(?:\[?User\]?\s+([\w\.]+)\s.*(logged\s+\w+)).*/';
+    //'/\[(\d{2}\/\w{3}\/\d{4} \d{2}:\d{2}:\d{2})\].*\[IPv4\]\s(\d+\.\d+\.\d+\.\d+).*\[MAC\]\s(\w{2}\-\w{2}\-\w{2}\-\w{2}\-\w{2}\-\w{2}).*(?:\[User\]\s([\w\.]+)\s.*(logged \w+)|(?:Host\sregistered)).*/';
+
 
     private $latestDate;
     private $databaseHandler;
@@ -34,7 +42,7 @@ class Parser
     public function parseString($log)
     {
         // разбиваем на строки
-        $records = explode("\n", $log);
+        //$records = explode("\n", $log);
 //        $records = $log;
 //
         $result = [];
@@ -43,7 +51,7 @@ class Parser
         $usersData = $userHandler->getUsers();
 
         $users = [];
-        foreach ($usersData as $user){
+        foreach ($usersData as $user) {
             $users[$user['id']] = $user['username'];
         }
         $newlyCreatedUsers = [];
@@ -51,43 +59,29 @@ class Parser
         $nextUserId = $userHandler->getNextUserId();
 
         //counter for newly created users' ids
-        $i = 0;
 
-        foreach($records as $record) {
-            if (!(strpos($record, self::PRE_LOG_IN_STRING))
-                && !(strpos($record, self::PRE_LOG_OUT_STRING))) {
-                continue;
-            }
+        preg_match_all(self::PRE_MATCH_USER_LOG, $log, $records, PREG_SET_ORDER);
 
-            if ($begining = strpos($record, self::PRE_USERNAME_STRING_WHILE_LOG_IN)) {
-                $actionType = self::PRE_LOG_IN_STRING;
-                $tail = substr($record, $begining + strlen(self::PRE_USERNAME_STRING_WHILE_LOG_IN) + 1);
-            } elseif ($begining = strpos($record, self::PRE_USERNAME_STRING_WHILE_LOG_OUT)) {
-                $actionType = self::PRE_LOG_OUT_STRING;
-                $tail = substr($record, $begining + strlen(self::PRE_USERNAME_STRING_WHILE_LOG_OUT) + 1);
-            }
+        $userNum = 0;
 
+        foreach ($records as $record) {
             // выгребаем имя пользователя
-            $username = substr($tail, 0, strpos($tail, ' '));
+            $username = $record[self::INDX_UNAME];
 
-            $datetime = substr(
-                $record,
-                strpos($record, self::TIME_START_STRING) + strlen(self::TIME_START_STRING),
-                strpos($record, self::TIME_END_STRING) - strlen(self::TIME_END_STRING)
-            );
             // @TODO check if there's need to continue parsing
-//            date_create_from_format('d/M/Y H:i:s', $datetime)->getTimestamp();
+            // date_create_from_format('d/M/Y H:i:s', $datetime)->getTimestamp();
 
-            if (!in_array($username, $users)){
-                $users[$nextUserId + $i] = $username;
+            if (!in_array($username, $users)) {
+                $users[$nextUserId + $userNum] = $username;
                 $newlyCreatedUsers[] = ['username' => $username];
-                $i++;
+                $userNum++;
             }
+
             $result[] = [
                 'username' => $username,
-                'user_id'  => array_search($username, $users),
-                'action'   => $actionType,
-                'datetime' => $datetime,
+                'user_id' => array_search($username, $users),
+                'action' => $record[self::INDX_ACTION],
+                'datetime' => $record[self::INDX_DATE]
             ];
 //            if ((count($result) % 10000) == 0){
 //                $this->databaseHandler->saveParsedData($result);
@@ -99,36 +93,40 @@ class Parser
 //        $this->databaseHandler->saveUsers($newlyCreatedUsers);
         $userHandler->saveUsers($newlyCreatedUsers);
         echo 'Hell yeah!';
-
         return $result;
     }
 
     /**
      * Method for yielding log data line by line
      * @param string $path
-     * @yield string $currentLine
+     * @param string $fromDate
+     * @return string $currentLine
      */
-    public function getLog($path)
+    public function getLogFromDate($path, $fromDate = null)
     {
         set_time_limit(60);
         $fp = fopen($path, 'r');
 
         $pos = -2; // Skip final new line character (Set to -1 if not present)
 
-        $lines = array();
+        $lines = [];
         $currentLine = '';
 
-//        while (-1 !== fseek($fp, $pos, SEEK_END)) {
         while (-1 !== fseek($fp, $pos, SEEK_END)) {
-            $char = fgetc($fp);
+            $char = fgets($fp);
             if (PHP_EOL == $char) {
-                yield $currentLine;
-//                $lines[] = $currentLine;
+                $lines[] = $currentLine;
                 $currentLine = '';
             } else {
                 $currentLine = $char . $currentLine;
             }
+            if ($fromDate && strpos($currentLine, $fromDate)) {
+                break;
+            }
             $pos--;
         }
+        fclose($fp);
+        //$lines[] = $currentLine;
+        return implode(PHP_EOL, $lines);
     }
 }

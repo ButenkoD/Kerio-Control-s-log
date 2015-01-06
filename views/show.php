@@ -13,8 +13,8 @@
             <?php foreach ($dates as $date): ?>
                 <?php if (isset($tableRow[$date])): ?>
                     <?php
-                        $value = isset($tableRow[$date]['valueIn']) ? $tableRow[$date]['valueIn']: '';
-                        $value .= isset($tableRow[$date]['valueOut']) ? $tableRow[$date]['valueOut'] : '';
+                    $value = isset($tableRow[$date]['value']) ? $tableRow[$date]['value'] : '';
+                    //  $value .= isset($tableRow[$date]['valueOut']) ? $tableRow[$date]['valueOut'] : '';
                     ?>
                     <?php if (isset($tableRow[$date]['late']) && $tableRow[$date]['late']): ?>
                         <td style="color:red;"><?= $value ?></td>
