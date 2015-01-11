@@ -1,5 +1,9 @@
 <?php
 
+
+use \model\SqlDateFormat;
+use \model\LogDateFormat;
+
 /**
  * Class Parser
  */
@@ -8,13 +12,6 @@ class Parser
     /**
      * Конфиг синтаксиса лога
      */
-    /*const PRE_USERNAME_STRING_WHILE_LOG_IN = "[User]";
-    const PRE_USERNAME_STRING_WHILE_LOG_OUT = 'User';
-    const PRE_LOG_IN_STRING = 'logged in';
-    const PRE_LOG_OUT_STRING = 'logged out';
-    const TIME_START_STRING = '[';
-    const TIME_END_STRING = ']';*/
-
     const INDX_DATE = 1;
     const INDX_UNAME = 2;
     const INDX_ACTION = 3;
@@ -47,6 +44,7 @@ class Parser
 //
         $result = [];
         $userHandler = new UserRepository();
+        $logRepository = new LogRepository();
 //        $usersData = $this->databaseHandler->getUsers();
         $usersData = $userHandler->getUsers();
 
@@ -60,39 +58,47 @@ class Parser
 
         //counter for newly created users' ids
 
-        preg_match_all(self::PRE_MATCH_USER_LOG, $log, $records, PREG_SET_ORDER);
+        $logFormatter = new LogDateFormat();
+        $sqlFormatter = new SqlDateFormat();
 
+        preg_match_all(self::PRE_MATCH_USER_LOG, $log, $records, PREG_SET_ORDER);
+        $existLogMap = $this->getExistingLogsMap($records, $logRepository, $logFormatter, $sqlFormatter);
         $userNum = 0;
+        $skipped = 0;
+        $created = 0;
 
         foreach ($records as $record) {
             // выгребаем имя пользователя
             $username = $record[self::INDX_UNAME];
+            if (in_array($logFormatter->stringToTimestamp($record[self::INDX_DATE]), $existLogMap[$username . $record[self::INDX_ACTION]])) {
+                $skipped++;
+            } else {
+                // @TODO check if there's need to continue parsing
+                //date_create_from_format('d/M/Y H:i:s', $datetime)->getTimestamp();
+                if (!in_array($username, $users)) {
+                    $users[$nextUserId + $userNum] = $username;
+                    $newlyCreatedUsers[] = ['username' => $username];
+                    $userNum++;
+                }
 
-            // @TODO check if there's need to continue parsing
-            // date_create_from_format('d/M/Y H:i:s', $datetime)->getTimestamp();
-
-            if (!in_array($username, $users)) {
-                $users[$nextUserId + $userNum] = $username;
-                $newlyCreatedUsers[] = ['username' => $username];
-                $userNum++;
-            }
-
-            $result[] = [
-                'username' => $username,
-                'user_id' => array_search($username, $users),
-                'action' => $record[self::INDX_ACTION],
-                'datetime' => $record[self::INDX_DATE]
-            ];
+                $result[] = [
+                    'username' => $username,
+                    'user_id' => array_search($username, $users),
+                    'action' => $record[self::INDX_ACTION],
+                    'datetime' => $record[self::INDX_DATE]
+                ];
+                $created++;
 //            if ((count($result) % 10000) == 0){
 //                $this->databaseHandler->saveParsedData($result);
 //                var_dump(date('H:i:s', time()));
 //                $result = [];
 //            }
+            }
         }
 //        $this->databaseHandler->saveParsedData($result);
 //        $this->databaseHandler->saveUsers($newlyCreatedUsers);
         $userHandler->saveUsers($newlyCreatedUsers);
-        echo 'Hell yeah!';
+        echo "Created: $userNum user records <br> Created: $created log records <br> Skipped: $skipped log records <br>";
         return $result;
     }
 
@@ -129,4 +135,33 @@ class Parser
         //$lines[] = $currentLine;
         return implode(PHP_EOL, $lines);
     }
+
+    /**
+     * @param $records
+     * @param $logRepository
+     * @return existLogMap
+     */
+    private function getExistingLogsMap($records, $logRepository, $logFormatter, $sqlFormatter)
+    {
+        $min = $logFormatter->stringToTimestamp($records[0][self::INDX_DATE]);
+        $max = $min;
+        // ищем диапазон дат
+        foreach ($records as $record) {
+            $current = $logFormatter->stringToTimestamp($record[self::INDX_DATE]);
+            if ($current > $max) {
+                $max = $current;
+            }
+            if ($current < $min) {
+                $min = $current;
+            }
+        }
+        $existLogs = $logRepository->getUsers($sqlFormatter->timestampToString($min), $sqlFormatter->timestampToString($max));
+        $existLogMap = array();
+        foreach ($existLogs as $existLog) {
+            $existLogMap[$existLog['username'] . $existLog['action_type']][] = $sqlFormatter->stringToTimestamp($existLog['date_time']);
+        }
+        unset($existLogs);
+        return $existLogMap;
+    }
+
 }

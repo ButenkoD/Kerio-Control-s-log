@@ -6,7 +6,7 @@ namespace model;
 class CellReportModel
 {
     private $notification;
-    private $messages = array();
+    private $timePairs = array();
     private $workedHours = 0;
 
     /**
@@ -28,17 +28,17 @@ class CellReportModel
     /**
      * @return array
      */
-    public function getMessages()
+    public function getTimePairs()
     {
-        return $this->messages;
+        return $this->timePairs;
     }
 
     /**
-     * @param array $messages
+     * @param array $timePairs
      */
-    public function setMessages($messages)
+    public function setTimePairs($timePairs)
     {
-        $this->messages = $messages;
+        $this->timePairs = $timePairs;
     }
 
     /**
@@ -78,9 +78,5 @@ class CellReportModel
         $this->isWholeDay = $isWholeDay;
     }
 
-    public function toString()
-    {
-        return 'Heay';
-    }
 
 }

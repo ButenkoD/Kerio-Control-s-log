@@ -8,16 +8,16 @@ class LogRepository extends Repository
     {
         $sql = "INSERT INTO $this->tableName (username, user_id, action_type, date_time)
                 VALUES";
-        foreach($data as $record){
+        foreach ($data as $record) {
             $sql .= "('"
-                .$record['username']
-                ."', '"
-                .$record['user_id']
-                ."', '"
-                .$record['action']
-                ."', STR_TO_DATE('"
-                .$record['datetime']
-                ."', '%d/%b/%Y %T')), ";
+                . $record['username']
+                . "', '"
+                . $record['user_id']
+                . "', '"
+                . $record['action']
+                . "', STR_TO_DATE('"
+                . $record['datetime']
+                . "', '%d/%b/%Y %T')), ";
         }
         $sql = substr($sql, 0, strrpos($sql, ','));
         $sql .= ";";

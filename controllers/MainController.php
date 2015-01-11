@@ -1,7 +1,6 @@
 <?php
 
 use \service\UserActionService;
-use \model\CellReportModel;
 
 /**
  * Class MainController
@@ -37,18 +36,14 @@ class MainController
 
         $userService = new UserActionService();
         foreach ($rows as $row) {
-            foreach ($dates as $date) {
-                if (date('Y-m-d', strtotime($row['date_time'])) == $date) {
-                    $userService->addUserDailyAction($row, $date);
-                }
-            }
+            $userService->addUserDailyAction($row);
         }
 
-
+        //TODO: избавиться от массива - передать объект на вьюшку или JSON
         foreach ($userService->getUserDailyActions() as $act) {
             $report = $act->calculateDailyReport();
             $table[$act->getUsername()][$act->getDate()]['note'] = $report->getNotification();
-            $table[$act->getUsername()][$act->getDate()]['messages'] = $report->getMessages();
+            $table[$act->getUsername()][$act->getDate()]['messages'] = $report->getTimePairs();
             $table[$act->getUsername()][$act->getDate()]['isWholeDay'] = $report->getIsWholeDay();
         };
         // Выводим таблицу
@@ -61,7 +56,6 @@ class MainController
      */
     public function clearDBAction()
     {
-        $userRepository = new UserRepository();
         $databaseHandler = new Database();
         if ($result = $databaseHandler->clearLogData() === true) {
             echo "DB's table was truncated";
@@ -77,11 +71,13 @@ class MainController
     {
         $config = Config::getInstance();
         $log = file_get_contents($config->get('log_file_path'));
-
         $databaseHandler = new Database();
         $parser = new Parser($databaseHandler);
 //       $log = $parser->getLog($config->get('log_file_path'));
         $data = $parser->parseString($log);
-        $databaseHandler->saveParsedData($data);
+        if (!empty($data)) {
+            $databaseHandler->saveParsedData($data);
+        }
+
     }
 }

@@ -3,23 +3,22 @@
 namespace model;
 
 use \model\CellReportModel;
+use \model\TimePeriod;
 
 class UserActionModel
 {
-    private $logins;
-    private $logouts;
-    private $logPairs;
+    private $registeredLogIns;
+    private $registeredLogOuts;
     private $workedSeconds = 0;
     private $username;
     private $date;
 
-    function __construct($row)
+    function __construct($username, $date)
     {
-        $this->logins = array();
-        $this->logouts = array();
-        $this->setUsername($row['username']);
-        $this->addAction($row['action_type'], $row['date_time']);
-        $this->date = $row['date'];
+        $this->registeredLogIns = array();
+        $this->registeredLogOuts = array();
+        $this->setUsername($username);
+        $this->setDate($date);
         return $this;
     }
 
@@ -29,36 +28,31 @@ class UserActionModel
     }
 
 
-    public function generateKey()
+    public function getRegisteredLogIns()
     {
-        return $this->date . $this->username;
+        return $this->registeredLogIns;
     }
 
-    public function getLogins()
+    public function setRegisteredLogIns(array $registeredLogIns)
     {
-        return $this->logins;
-    }
-
-    public function setLogins(array $logins)
-    {
-        $this->logins = $logins;
+        $this->registeredLogIns = $registeredLogIns;
     }
 
 
     /**
      * @return mixed
      */
-    public function getLogouts()
+    public function getRegisteredLogOuts()
     {
-        return $this->logouts;
+        return $this->registeredLogOuts;
     }
 
     /**
-     * @param mixed $logouts
+     * @param mixed $registeredLogOuts
      */
-    public function setLogouts(array $logouts)
+    public function setRegisteredLogOuts(array $registeredLogOuts)
     {
-        $this->logouts = $logouts;
+        $this->registeredLogOuts = $registeredLogOuts;
     }
 
     /**
@@ -69,10 +63,14 @@ class UserActionModel
         return $this->date;
     }
 
+    /**
+     * @param mixed $date
+     */
     public function setDate($date)
     {
-        return $this->date = $date;
+        $this->date = $date;
     }
+
 
     /**
      * @return mixed
@@ -90,83 +88,62 @@ class UserActionModel
         $this->username = $username;
     }
 
-    public function addAction($action, $date)
+    public function addAction($action, $time)
     {
-        $date = date('H:i', strtotime($date));
         if ($action == 'logged in') {
-            $this->logins[] = $date;
+            $this->registeredLogIns[] = $time;
         } else {
-            $this->logouts[] = $date;
+            $this->registeredLogOuts[] = $time;
         }
     }
 
 
-    private function getLogTimePairs($logins, $logouts, $logPairs = array())
+    private function getTimePeriods($logPair = array())
     {
-        $exit = false;
-
-        $firstLogIn = date($logins[0]);
-        $firstLogOut = date($logouts[0]);
-        if (empty($firstLogIn) || empty($firstLogOut)) {
-            $logPairs[] = empty($firstLogIn) ? 'Logout: ' . $firstLogOut : 'Login: ' . $firstLogIn;
-
-        } else {
-            //если нет первого лога
-            // Проверяем был ли логаут до логина
-            while ($firstLogIn > $firstLogOut) {
-                // ищем первый логаут после логина
-                array_shift($logouts);
-                if (null == $logouts) {
-                    // выходим если нет логаутов
-                    break;
-                }
-            }
-            // если это был последний логин ставим самый поздний логаут
-            if (count($logins) == 1 && count($logouts) > 1) {
-                $firstLogOut = max($logouts);
-            } else {
-                // находим и убираем логины до логаута
-                $tempLog = $logins[0];
-                while ($tempLog < $firstLogOut) {
-                    array_shift($logins);
-                    if (null == $logins) {
-                        // выходим если нет логаутов
-                        break;
-                    }
-                    $tempLog = $logins[0];
-                }
-            }
-            $this->workedSeconds += strtotime($firstLogOut) - strtotime($firstLogIn);
-            $logPairs[] = $firstLogIn . ' -- ' . $firstLogOut;
-            $exit = true;
-
+        $timePeriod = new TimePeriod();
+        $logIn = current($this->registeredLogIns);
+        // находим первый логаут после логина
+        $logOut = $this->findNextLoginAfterLogout(false);
+        $timePeriod->setTimeIn($logIn);
+        $timePeriod->setTimeOut($logOut);
+        // Пропускаем логауты, если они были раньше логина
+        $this->workedSeconds += $timePeriod->getWorkedSeconds();
+        // сохраняем текущую пару логина-логаута
+        $logPair[] = $timePeriod->toString();
+        // если есть еще логины то рекурсивно записываем следующие
+        if ($this->findNextLoginAfterLogout(true)) {
+            $logPair = $this->getTimePeriods($logPair);
         }
-        return $logPairs;
+        return $logPair;
     }
 
     public function calculateDailyReport()
     {
-
         $dayReport = new CellReportModel();
-        //если записаны только логины или логауты
-        if (empty($this->logins) xor empty($this->logouts)) {
-            if (empty($this->logins)) {
-                $dayReport->setMessages($this->logouts);
-                $dayReport->setNotification('Only Logouts');
-            } else {
-                $dayReport->setMessages($this->logins);
-                $dayReport->setNotification('Only Logins');
-            }
-        } else {// если есть и логин и логаут
-            asort($this->logins);
-            asort($this->logouts);
-            $logins = new \ArrayObject($this->logins);
-            $logouts = new \ArrayObject($this->logouts);
-            $pairs = $this->getLogTimePairs($logins->getArrayCopy(), $logouts->getArrayCopy());
-            $dayReport->setMessages($pairs);
-            $dayReport->setWorkedHours($this->getWorkedHours());
-        }
+        $dayReport->setTimePairs($this->getTimePeriods());
+        $dayReport->setWorkedHours($this->getWorkedHours());
         return $dayReport;
     }
+
+
+    /**
+     * @param $seekLogin
+     * @return mixed
+     */
+    private function findNextLoginAfterLogout($seekLogin)
+    {
+        if ($seekLogin) {
+            $elem1 = current($this->registeredLogOuts);
+            $elem2 = next($this->registeredLogIns);
+        } else {
+            $elem2 = current($this->registeredLogOuts);
+            $elem1 = current($this->registeredLogIns);
+        }
+        while ($elem2 && $elem2 < $elem1) {
+            $elem2 = $seekLogin ? next($this->registeredLogIns) : next($this->registeredLogOuts);
+        }
+        return $elem2;
+    }
+
 
 }
