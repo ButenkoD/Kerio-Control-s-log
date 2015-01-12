@@ -3,25 +3,31 @@
     <script type="application/javascript" src="../static/js/jquery-1.11.2.min.js"></script>
     <script type="application/javascript" src="../static/js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
     <script type="application/javascript" src="../static/js/jquery.dataTables.min.js"></script>
-
+    <script type="application/javascript" src="../bootstrap3/dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../static/js/jquery-ui-1.11.2.custom/jquery-ui.min.css">
     <link rel="stylesheet" href="../static/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="../static/css/jquery.dataTables_themeroller.css">
+    <link rel="stylesheet" href="../bootstrap3/dist/css/bootstrap.min.css">
+    <!--    <link rel="stylesheet" href="../bootstrap3/dist/css/bootstrap-theme.min.css">-->
     <link rel="stylesheet" href="../static/css/kerio.css">
+
 </head>
-<body>
-<form>
-    <label>Start date</label>
-    <input type="text" id="start-date" name="date" value="2014-12-05">
-    <!--onclick="makeRequest(event, 'showAll');-->
-    <button class="button" onclick="makeRequest(event, 'showAll');">Show log records</button>
-    <button class=" button" onclick="makeRequest(event,'clearDB');">Clear Database</button>
-    <button class="button" onclick="makeRequest(event,'parseLog');">Parse Kerio log file</button>
-</form>
+<body class="container">
+<div class="container">
+    <form>
+        <label>Start date</label>
+        <input type="text" id="start-date" name="date" value="2014-12-05">
+        <!--onclick="makeRequest(event, 'showAll');-->
+<!--        <button class="button btn btn-default" onclick="makeRequest(event, 'showAll');">Show log records</button>-->
+        <button class="button btn btn-warning" onclick="makeRequest(event,'clearDB');">Clear Database</button>
+        <button class="button btn btn-default" onclick="makeRequest(event,'parseLog');">Parse Kerio log file</button>
+        <button class="button btn btn-default" onclick="makeRequest(event, 'showAll');">Show log records</button>
+    </form>
+</div>
 
 <br>
 
-<div id="txtHint"><b>Required info will be listed here.</b></div>
+<div id="txtHint" class="container"><b>Required info will be listed here.</b></div>
 <script>
     function makeRequest(event, action) {
         event.preventDefault();
@@ -44,6 +50,7 @@
                         ],
                         iDisplayLength: -1
                     });
+                    $("#dataTable").addClass("table table-hover table-bordered");
                 }
             }
         }
@@ -55,11 +62,11 @@
     $(document).ready(function () {
         $('.button').button();
         $(':input').addClass("ui-widget ui-widget-content ui-corner-all");
-        $('label, #txtHint').addClass("ui-widget  label");
+        $('label, #txtHint').addClass("ui-widget  label ");
         $('#start-date').datepicker({dateFormat: 'yy-mm-dd'});
     })
 
-
 </script>
+
 </body>
 </html>
