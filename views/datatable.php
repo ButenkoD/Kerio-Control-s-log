@@ -27,11 +27,8 @@ use model\CellReportModel;
                     <?php echo $tableRow[$date]['note'] . '<br/>' ?>
                 <?php endif ?>
                 <?php if (isset($tableRow[$date]['messages'])): ?>
-                    <?php foreach ($tableRow[$date]['messages'] as $msg): ?>
-                        <?php echo $msg . '<br/>' ?>
-                    <?php endforeach ?>
+                    <?php echo $tableRow[$date]['messages'] ?>
                 <?php endif ?>
-
                 </td>
             <?php endforeach ?>
         </tr>

@@ -43,7 +43,7 @@ class MainController
         foreach ($userService->getUserDailyActions() as $act) {
             $report = $act->calculateDailyReport();
             $table[$act->getUsername()][$act->getDate()]['note'] = $report->getNotification();
-            $table[$act->getUsername()][$act->getDate()]['messages'] = $report->getTimePairs();
+            $table[$act->getUsername()][$act->getDate()]['messages'] = $report->getTimePair();
             $table[$act->getUsername()][$act->getDate()]['isWholeDay'] = $report->getIsWholeDay();
         };
         // Выводим таблицу
