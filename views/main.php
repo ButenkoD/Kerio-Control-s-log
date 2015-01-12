@@ -3,11 +3,11 @@
     <script type="application/javascript" src="../static/js/jquery-1.11.2.min.js"></script>
     <script type="application/javascript" src="../static/js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
     <script type="application/javascript" src="../static/js/jquery.dataTables.min.js"></script>
-    <script type="application/javascript" src="../bootstrap3/dist/js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../static/bootstrap3/dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../static/js/jquery-ui-1.11.2.custom/jquery-ui.min.css">
     <link rel="stylesheet" href="../static/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="../static/css/jquery.dataTables_themeroller.css">
-    <link rel="stylesheet" href="../bootstrap3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/bootstrap3/dist/css/bootstrap.min.css">
     <!--    <link rel="stylesheet" href="../bootstrap3/dist/css/bootstrap-theme.min.css">-->
     <link rel="stylesheet" href="../static/css/kerio.css">
 
