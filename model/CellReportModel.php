@@ -6,8 +6,9 @@ namespace model;
 class CellReportModel
 {
     private $notification;
-    private $timePairs = array();
+    private $timePair;
     private $workedHours = 0;
+    const MIN_WORKED_HOURS = 8;
 
     /**
      * @return mixed
@@ -26,19 +27,19 @@ class CellReportModel
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getTimePairs()
+    public function getTimePair()
     {
-        return $this->timePairs;
+        return $this->timePair;
     }
 
     /**
-     * @param array $timePairs
+     * @param array $timePair
      */
-    public function setTimePairs($timePairs)
+    public function setTimePair($timePair)
     {
-        $this->timePairs = $timePairs;
+        $this->timePair = $timePair;
     }
 
     /**
@@ -67,7 +68,7 @@ class CellReportModel
      */
     public function getIsWholeDay()
     {
-        return $this->workedHours >= 8;
+        return $this->workedHours >= self::MIN_WORKED_HOURS;
     }
 
     /**

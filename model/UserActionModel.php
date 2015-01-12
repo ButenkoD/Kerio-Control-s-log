@@ -4,6 +4,7 @@ namespace model;
 
 use \model\CellReportModel;
 use \model\TimePeriod;
+use service\KDateUtil;
 
 class UserActionModel
 {
@@ -12,6 +13,8 @@ class UserActionModel
     private $workedSeconds = 0;
     private $username;
     private $date;
+
+    const SECONDS_IN_HOUR = 3600;
 
     function __construct($username, $date)
     {
@@ -24,7 +27,7 @@ class UserActionModel
 
     public function getWorkedHours()
     {
-        return $this->workedSeconds / 3600;
+        return $this->workedSeconds / self::SECONDS_IN_HOUR;
     }
 
 
@@ -98,51 +101,54 @@ class UserActionModel
     }
 
 
-    private function getTimePeriods($logPair = array())
+    private function getTimePeriod()
     {
         $timePeriod = new TimePeriod();
-        $logIn = current($this->registeredLogIns);
+        $logIn = $this->getFirstDailyLogin();
         // находим первый логаут после логина
-        $logOut = $this->findNextLoginAfterLogout(false);
+        $logOut = $this->findLogoutAfterLastLogin($logIn);
         $timePeriod->setTimeIn($logIn);
         $timePeriod->setTimeOut($logOut);
         // Пропускаем логауты, если они были раньше логина
         $this->workedSeconds += $timePeriod->getWorkedSeconds();
-        // сохраняем текущую пару логина-логаута
-        $logPair[] = $timePeriod->toString();
-        // если есть еще логины то рекурсивно записываем следующие
-        if ($this->findNextLoginAfterLogout(true)) {
-            $logPair = $this->getTimePeriods($logPair);
-        }
-        return $logPair;
+        return $timePeriod->toString();
     }
 
     public function calculateDailyReport()
     {
         $dayReport = new CellReportModel();
-        $dayReport->setTimePairs($this->getTimePeriods());
+        $dayReport->setTimePair($this->getTimePeriod());
         $dayReport->setWorkedHours($this->getWorkedHours());
         return $dayReport;
     }
 
 
     /**
-     * @param $seekLogin
      * @return mixed
      */
-    private function findNextLoginAfterLogout($seekLogin)
+    private function findLogoutAfterLastLogin($logIn)
     {
-        if ($seekLogin) {
-            $elem1 = current($this->registeredLogOuts);
-            $elem2 = next($this->registeredLogIns);
-        } else {
-            $elem2 = current($this->registeredLogOuts);
-            $elem1 = current($this->registeredLogIns);
-        }
-        while ($elem2 && $elem2 < $elem1) {
-            $elem2 = $seekLogin ? next($this->registeredLogIns) : next($this->registeredLogOuts);
+        $elem2 = current($this->registeredLogOuts);
+        while ($elem2 && $elem2 < $logIn) {
+            $elem2 = next($this->registeredLogOuts);
         }
         return $elem2;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getFirstDailyLogin()
+    {
+        $firstLogin = $logIn = current($this->registeredLogIns);
+        $minLogTime = KDateUtil::toMinLogTime($logIn);
+        while ($logIn && ($logIn < $minLogTime)) {
+            $logIn = next($this->registeredLogIns);
+        }
+        if (!$logIn) {
+            $logIn = $firstLogin;
+        }
+        return $logIn;
     }
 
 

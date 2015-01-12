@@ -22,13 +22,11 @@ require_once(CLASSES_PATH . 'LogRepository.php');
 require_once(CONTROLLERS_PATH . 'MainController.php');
 // Подключаем сервисы
 require_once(SERVICES_PATH . 'UserActionService.php');
+require_once(SERVICES_PATH . 'KDateUtil.php');
 
 require_once(MODELS_PATH . 'TimePeriod.php');
 require_once(MODELS_PATH . 'UserActionModel.php');
 require_once(MODELS_PATH . 'CellReportModel.php');
-require_once(MODELS_PATH . 'KerioDateFormat.php');
-require_once(MODELS_PATH . 'LogDateFormat.php');
-require_once(MODELS_PATH . 'SqlDateFormat.php');
 
 
 // get type of action that should be performed
