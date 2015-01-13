@@ -28,7 +28,7 @@
             <input type="radio" name="log-source" value="dir"/> Use directory
         </div>
     </form>
-    <img id="loader" src="../static/images/loader.gif" alt="" width="50" height="53"/>
+    <img id="loader" src="static/images/loader.gif" alt="" width="50" height="53"/>
 </div>
 <div id="txtHint" class="container"><b>Required info will be listed here.</b></div>
 <script>
