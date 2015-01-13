@@ -98,6 +98,9 @@ input[type="search"], select, a.paginate_button.current {
     margin: 0 0 0 2%;
 }
 
+.btn-primary:hover, .btn-primary:focus, .btn-primary.focus, .btn-primary:active, .btn-primary.active, .open>.dropdown-toggle.btn-primary {
+    background-color: #3E95DF;
+}
 /*end form*/
 
         /*table*/
@@ -107,7 +110,9 @@ table.dataTable.no-footer {
 }
 
 table thead > tr {
-    background: #f0ad4e;
+    background: #3E95DF;
+    color: #fff;
+    font-weight: normal;
 }
 
 div#dataTable_length {

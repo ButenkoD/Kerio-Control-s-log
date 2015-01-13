@@ -24,8 +24,16 @@
             <button class="button btn btn-default" onclick="makeRequest(event,'parseLog');">Parse Kerio log file
             </button>
             <button class="button btn btn-default" onclick="makeRequest(event, 'showAll');">Show log records</button>
-            <input type="radio" name="log-source" value="file" checked/> Use single file
-            <input type="radio" name="log-source" value="dir"/> Use directory
+<!--            <input type="radio" name="log-source" value="file" checked/> Use single file-->
+<!--            <input type="radio" name="log-source" value="dir"/> Use directory-->
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-primary active">
+                    <input type="radio" name="log-source" id="option1" autocomplete="off" value="file" checked> Use single file
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="log-source" id="option2" autocomplete="off" value="dir"> Use directory
+                </label>
+            </div>
         </div>
     </form>
     <img id="loader" src="static/images/loader.gif" alt="" width="50" height="53"/>

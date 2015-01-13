@@ -1,3 +1,4 @@
-# Ignore configuration files that may contain sensitive information.
-/.idea
-
+config_local.php
+config.php
+.gitignore
+config/.gitignore
