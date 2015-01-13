@@ -67,7 +67,6 @@
             }
             $("#loader").css("display", "none");
         }
-//        $("#loader").css("display", "none");
 
         var start_date = document.getElementById("start-date").value;
         xmlhttp.open("GET", "index.php?request_action=" + action + "&log-source=" + $(":radio:checked").val() + "&start_date=" + start_date, true);
@@ -77,7 +76,7 @@
         $('.button').button();
         $(':input').addClass("ui-widget ui-widget-content ui-corner-all");
         $('label, #txtHint').addClass("ui-widget  label ");
-        $('#start-date').datepicker({dateFormat: 'yy-mm-dd'});
+        $('#start-date').datepicker({dateFormat: 'yy-mm-dd',firstDay: 1});
     })
 
 </script>

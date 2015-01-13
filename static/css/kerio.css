@@ -100,6 +100,7 @@ input[type="search"], select, a.paginate_button.current {
 
 .btn-primary:hover, .btn-primary:focus, .btn-primary.focus, .btn-primary:active, .btn-primary.active, .open>.dropdown-toggle.btn-primary {
     background-color: #3E95DF;
+    border-color: #ccc;
 }
 /*end form*/
 
@@ -112,11 +113,14 @@ table.dataTable.no-footer {
 table thead > tr {
     background: #3E95DF;
     color: #fff;
-    font-weight: normal;
 }
 
 div#dataTable_length {
     margin: 0 0 20px;
+}
+
+th.sorting_asc, th.sorting {
+    font-weight: normal !important;
 }
 
     /*end table*/
