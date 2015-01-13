@@ -8,5 +8,6 @@ return [
         'password' => 'mysql'
     ],
     'log_file_path' => __DIR__ . '/../data/host.log',
+    'log_file_tree_dir' => __DIR__ . '/../data/logs',
     'showDayNumber' => 5,
 ];

@@ -23,6 +23,7 @@
             <button class="button btn btn-warning" onclick="makeRequest(event,'clearDB');">Clear Database</button>
             <button class="button btn btn-default" onclick="makeRequest(event,'parseLog');">Parse Kerio log file</button>
             <button class="button btn btn-default" onclick="makeRequest(event, 'showAll');">Show log records</button>
+            <input type="checkbox" name="parseTree" id="parseTree"/>
         </div>
     </form>
     <img id="loader" src="../static/images/loader.gif" alt="" width="50" height="53"/>
@@ -54,11 +55,10 @@
                     $("#dataTable").addClass("table table-hover table-bordered");
                 }
             }
-        }
-        alert(12);
+        }        
         $("#loader").css("display","none");
         var start_date = document.getElementById("start-date").value;
-        xmlhttp.open("GET", "index.php?request_action=" + action + "&start_date=" + start_date, true);
+        xmlhttp.open("GET", "index.php?request_action=" + action + "&parse-tree=" + $('#parseTree').is(':checked') + "&start_date=" + start_date, true);
         xmlhttp.send();
     }
 

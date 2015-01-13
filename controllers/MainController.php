@@ -70,14 +70,43 @@ class MainController
     public function parseLogAction()
     {
         $config = Config::getInstance();
-        $log = file_get_contents($config->get('log_file_path'));
         $databaseHandler = new Database();
         $parser = new Parser($databaseHandler);
-//       $log = $parser->getLog($config->get('log_file_path'));
-        $data = $parser->parseString($log);
-        if (!empty($data)) {
-            $databaseHandler->saveParsedData($data);
+        $logFiles = array();
+        if ($_GET['parse-tree'] == 'true') {
+            $logFiles = $this->getLogFilesList($config);
+        } else {
+            $logFiles[] = $config->get('log_file_path');
         }
+        if (empty($logFiles)) {
+            echo 'No files found';
+        }
+        foreach ($logFiles as $name) {
+            $log = file_get_contents($name);
+            echo('<i>File: ' . $name . '<br></i>');
+            $data = $parser->parseString($log);
+            if (!empty($data)) {
+                $databaseHandler->saveParsedData($data);
+            }
+        }
+    }
 
+
+    /**
+     * @param $config
+     * @return array
+     */
+    private function getLogFilesList($config)
+    {
+        $array = array();
+        $path = $config->get('log_file_tree_dir');
+        $dir = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
+        $files = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::SELF_FIRST);
+        foreach ($files as $file) {
+            if (substr($file->getFileName(), -3) == 'log') {
+                $array[] = $file->getPath() . DIRECTORY_SEPARATOR . $file->getFileName();
+            }
+        }
+        return $array;
     }
 }
