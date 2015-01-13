@@ -4,32 +4,33 @@
     <script type="application/javascript" src="../static/js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
     <script type="application/javascript" src="../static/js/jquery.dataTables.min.js"></script>
     <script type="application/javascript" src="../static/bootstrap3/dist/js/bootstrap.min.js"></script>
+<!--    <script type="application/javascript" src="../static/js/preLoader.js"></script>-->
     <link rel="stylesheet" href="../static/js/jquery-ui-1.11.2.custom/jquery-ui.min.css">
     <link rel="stylesheet" href="../static/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="../static/css/jquery.dataTables_themeroller.css">
     <link rel="stylesheet" href="../static/bootstrap3/dist/css/bootstrap.min.css">
-    <!--    <link rel="stylesheet" href="../bootstrap3/dist/css/bootstrap-theme.min.css">-->
     <link rel="stylesheet" href="../static/css/kerio.css">
 
 </head>
 <body class="container">
 <div class="container">
     <form>
-        <label>Start date</label>
-        <input type="text" id="start-date" name="date" value="2014-12-05">
-        <!--onclick="makeRequest(event, 'showAll');-->
-<!--        <button class="button btn btn-default" onclick="makeRequest(event, 'showAll');">Show log records</button>-->
-        <button class="button btn btn-warning" onclick="makeRequest(event,'clearDB');">Clear Database</button>
-        <button class="button btn btn-default" onclick="makeRequest(event,'parseLog');">Parse Kerio log file</button>
-        <button class="button btn btn-default" onclick="makeRequest(event, 'showAll');">Show log records</button>
+        <div class="top-block">
+            <label>Start date</label>
+            <input type="text" id="start-date" name="date" value="2014-12-05">
+            <!--onclick="makeRequest(event, 'showAll');-->
+    <!--    <button class="button btn btn-default" onclick="makeRequest(event, 'showAll');">Show log records</button>-->
+            <button class="button btn btn-warning" onclick="makeRequest(event,'clearDB');">Clear Database</button>
+            <button class="button btn btn-default" onclick="makeRequest(event,'parseLog');">Parse Kerio log file</button>
+            <button class="button btn btn-default" onclick="makeRequest(event, 'showAll');">Show log records</button>
+        </div>
     </form>
+    <img id="loader" src="../static/images/loader.gif" alt="" width="50" height="53"/>
 </div>
-
-<br>
-
 <div id="txtHint" class="container"><b>Required info will be listed here.</b></div>
 <script>
     function makeRequest(event, action) {
+        $("#loader").css("display","block");
         event.preventDefault();
 
         if (window.XMLHttpRequest) {
@@ -54,6 +55,8 @@
                 }
             }
         }
+        alert(12);
+        $("#loader").css("display","none");
         var start_date = document.getElementById("start-date").value;
         xmlhttp.open("GET", "index.php?request_action=" + action + "&start_date=" + start_date, true);
         xmlhttp.send();
