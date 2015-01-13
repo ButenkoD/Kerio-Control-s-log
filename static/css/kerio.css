@@ -44,21 +44,24 @@ table {
 }
 /*reset end*/
 
+/*main*/
+
 .container {
     margin-top: 2%;
 }
 
-form > * {
-    float: left;
-    margin: 0 10px;
-}
+/*end main*/
 
-form > button {
-    float: right;
-}
+/*form*/
 
 input#start-date {
     min-width: 272px;
+}
+
+input[type="search"], select, a.paginate_button.current {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 6px 12px;
 }
 
 .label {
@@ -82,19 +85,42 @@ input#start-date {
 
 .ui-widget, .btn {
     font-size: inherit;
+    vertical-align: top;
     padding: 6px 12px !important;
+}
+
+.top-block {
+    overflow: hidden;
+}
+
+.top-block button {
+    float: right;
+    margin: 0 0 0 2%;
+}
+
+/*end form*/
+
+        /*table*/
+
+table.dataTable.no-footer {
+    border-bottom: none;
+}
+
+table thead > tr {
+    background: #f0ad4e;
 }
 
 div#dataTable_length {
     margin: 0 0 20px;
 }
 
-input[type="search"], select, a.paginate_button.current {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 6px 12px;
+    /*end table*/
+
+    /*pre-loader*/
+
+#loader {
+    display: none;
+    margin: 10px auto;
 }
 
-table.dataTable.no-footer {
-    border-bottom: none;
-}
+/* end pre-loader*/
