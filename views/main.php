@@ -55,7 +55,6 @@
                 }
             }
         }
-        alert(12);
         $("#loader").css("display","none");
         var start_date = document.getElementById("start-date").value;
         xmlhttp.open("GET", "index.php?request_action=" + action + "&start_date=" + start_date, true);
