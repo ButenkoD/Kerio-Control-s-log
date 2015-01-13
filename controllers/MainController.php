@@ -73,7 +73,7 @@ class MainController
         $databaseHandler = new Database();
         $parser = new Parser($databaseHandler);
         $logFiles = array();
-        if ($_GET['parse-tree'] == 'true') {
+        if ($_GET['log-source'] == 'dir') {
             $logFiles = $this->getLogFilesList($config);
         } else {
             $logFiles[] = $config->get('log_file_path');
@@ -100,11 +100,13 @@ class MainController
     {
         $array = array();
         $path = $config->get('log_file_tree_dir');
-        $dir = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
-        $files = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::SELF_FIRST);
-        foreach ($files as $file) {
-            if (substr($file->getFileName(), -3) == 'log') {
-                $array[] = $file->getPath() . DIRECTORY_SEPARATOR . $file->getFileName();
+        if (file_exists($path) && is_dir($path)) {
+            $dir = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
+            $files = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::SELF_FIRST);
+            foreach ($files as $file) {
+                if (substr($file->getFileName(), -3) == 'log') {
+                    $array[] = $file->getPath() . DIRECTORY_SEPARATOR . $file->getFileName();
+                }
             }
         }
         return $array;
