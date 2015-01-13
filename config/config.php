@@ -5,7 +5,7 @@ return [
         'dbName' => 'kerio_control',
         'serverName' => 'localhost',
         'username' => 'root',
-        'password' => ''
+        'password' => 'mysql'
     ],
     'log_file_path' => 'http://timereports.andersenlab.com/Kerio-Control-s-log/data/host.log',
     'log_file_tree_dir' => 'http://timereports.andersenlab.com/Kerio-Control-s-log/data/',
