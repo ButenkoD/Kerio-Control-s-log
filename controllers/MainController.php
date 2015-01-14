@@ -1,6 +1,7 @@
 <?php
 
 use \service\UserActionService;
+use \service\KDateUtil;
 
 /**
  * Class MainController
@@ -84,7 +85,8 @@ class MainController
         foreach ($logFiles as $name) {
             $log = file_get_contents($name);
             echo('<i>File: ' . $name . '<br></i>');
-            $data = $parser->parseString($log);
+            $mindate = KDateUtil::stringToDateOnly($_GET['start_date']);
+            $data = $parser->parseString($log, $mindate);
             if (!empty($data)) {
                 $databaseHandler->saveParsedData($data);
             }

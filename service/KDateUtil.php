@@ -41,20 +41,26 @@ class KDateUtil
         return self::__timestampToString(self::LOG_PATTERN, $timestamp);
     }
 
-    public static function toDateOnly($timestamp)
+    public static function timestampToDateOnly($timestamp)
     {
         return self::__timestampToString(self::DATE_ONLY, $timestamp);
     }
 
+    public static function stringToDateOnly($string)
+    {
+        return self::__stringToTimestamp(self::DATE_ONLY, $string);
+    }
+
     public static function isTimestampAfterHours($timestamp, $string)
     {
-        $string = self::toDateOnly($timestamp) . ' ' . $string;
+        $string = self::timestampToDateOnly($timestamp) . ' ' . $string;
         return ($timestamp > self::toTimestampSQL($string));
     }
 
+
     public static function toMinLogTime($timestamp)
     {
-        return self::toTimestampSQL(self::toDateOnly($timestamp) . self::MIN_LOG_IN_TIME);
+        return self::toTimestampSQL(self::timestampToDateOnly($timestamp) . self::MIN_LOG_IN_TIME);
     }
 
     public static function toMinLogTimeStr($string)

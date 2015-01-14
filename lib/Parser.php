@@ -37,7 +37,7 @@ class Parser
      * @param string $log
      * @return array
      */
-    public function parseString($log)
+    public function parseString($log, $mindate)
     {
         // разбиваем на строки
         //$records = explode("\n", $log);
@@ -67,9 +67,9 @@ class Parser
         $skipped = 0;
         $created = 0;
 
-        foreach ($this->filterByVpn($records) as $record) {
+        foreach ($this->filterByVpn($records, $mindate) as $record) {
             $timestamp = KDateUtil::toTimestampLOG($record[self::INDEX_DATE]);
-            $dateOnly = KDateUtil::toDateOnly($timestamp);
+            $dateOnly = KDateUtil::timestampToDateOnly($timestamp);
 
             //array_map()
             $ipKey = $record[self::INDEX_IP4] . $record[self::INDEX_MAC] . $dateOnly;
@@ -168,8 +168,7 @@ class Parser
      */
     private function getExistingLogsMap($records, $logRepository)
     {
-        $min = KDateUtil::toTimestampLOG($records[0][self::INDEX_DATE]);
-        $max = $min;
+        $min = $max = KDateUtil::toTimestampLOG($records[0][self::INDEX_DATE]);
         // ищем диапазон дат
         foreach ($records as $record) {
             $current = KDateUtil::toTimestampLOG($record[self::INDEX_DATE]);
@@ -203,14 +202,13 @@ class Parser
      * @param $records
      * @return array
      */
-    private function filterByVpn($records)
+    private function filterByVpn($records, $mindate)
     {
-        // получаем список vpn
         $listVpn = $this->getVpnList();
-        $records = array_filter($records, function ($var) use ($listVpn) {
+        $records = array_filter($records, function ($var) use ($listVpn, $mindate) {
             foreach ($listVpn as $vpn) {
                 // если находим совпадение - исключаем
-                if (strpos($var[self::INDEX_IP4], $vpn)) {
+                if (strpos($var[self::INDEX_IP4], $vpn) || (KDateUtil::toTimestampLOG($var[self::INDEX_DATE]) < $mindate)) {
                     return false;
                 }
             }
