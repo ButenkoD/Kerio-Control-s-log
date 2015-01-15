@@ -123,6 +123,10 @@ th.sorting_asc, th.sorting {
     font-weight: normal !important;
 }
 
+.txt-color {
+    color: red;
+}
+
     /*end table*/
 
     /*pre-loader*/

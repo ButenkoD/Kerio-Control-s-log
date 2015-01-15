@@ -17,7 +17,7 @@
     <form>
         <div class="top-block">
             <label>Start date</label>
-            <input type="text" id="start-date" name="date" value="2014-12-05">
+            <input type="text" id="start-date" name="date" value="">
             <!--onclick="makeRequest(event, 'showAll');-->
             <!--    <button class="button btn btn-default" onclick="makeRequest(event, 'showAll');">Show log records</button>-->
             <button class="button btn btn-warning" onclick="makeRequest(event,'clearDB');">Clear Database</button>
@@ -27,10 +27,10 @@
 <!--            <input type="radio" name="log-source" value="file" checked/> Use single file-->
 <!--            <input type="radio" name="log-source" value="dir"/> Use directory-->
             <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-primary active">
+                <label class="btn btn-primary file active">
                     <input type="radio" name="log-source" id="option1" autocomplete="off" value="file" checked> Use single file
                 </label>
-                <label class="btn btn-primary">
+                <label class="btn btn-primary dir">
                     <input type="radio" name="log-source" id="option2" autocomplete="off" value="dir"> Use directory
                 </label>
             </div>
@@ -40,8 +40,20 @@
 </div>
 <div id="txtHint" class="container"><b>Required info will be listed here.</b></div>
 <script>
+
+//    function currentDate() {
+//        var date = new Date();
+//        var day = date.getDate();
+//        var mnth="00"+(date.getMonth()+1);
+//        mnth = mnth.substring(mnth.length-2);
+//        var year = date.getFullYear();
+//        var mydate = year+'-'+mnth+'-'+day;
+//        var ss = document.getElementById('start-date');
+//        ss.value = mydate;
+//    };
+
     function makeRequest(event, action) {
-        $("#loader").css("display", "block");
+//        $("#loader").css("display", "block");
         event.preventDefault();
 
         if (window.XMLHttpRequest) {
@@ -64,9 +76,9 @@
                     });
                     $("#dataTable").addClass("table table-hover table-bordered");
                 }
+//                $("#loader").css("display", "none");
             }
-            $("#loader").css("display", "none");
-        }
+        };
 
         var start_date = document.getElementById("start-date").value;
         xmlhttp.open("GET", "index.php?request_action=" + action + "&log-source=" + $(":radio:checked").val() + "&start_date=" + start_date, true);
@@ -76,8 +88,16 @@
         $('.button').button();
         $(':input').addClass("ui-widget ui-widget-content ui-corner-all");
         $('label, #txtHint').addClass("ui-widget  label ");
+//        currentDate();
         $('#start-date').datepicker({dateFormat: 'yy-mm-dd',firstDay: 1});
-    })
+        /*makeRequest(true,'showAll');
+        $( "#start-date" ).change(function() {
+            makeRequest(true,'showAll');
+        });
+        $('.file, .dir').click(function() {
+            makeRequest(true,'showAll');
+        });*/
+    });
 
 </script>
 

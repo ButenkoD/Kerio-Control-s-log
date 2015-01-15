@@ -21,7 +21,8 @@ use model\CellReportModel;
                 <?php if ($tableRow[$date]['isWholeDay']) : ?>
                     <td>
                 <?php else: ?>
-                    <td style="color:red">
+<!--                    <td style="color:red">-->
+                    <td class="txt-color">
                 <?php endif ?>
                 <?php if (isset($tableRow[$date]['note'])): ?>
                     <?php echo $tableRow[$date]['note'] . '<br/>' ?>
